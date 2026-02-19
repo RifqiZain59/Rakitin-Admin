@@ -3,6 +3,12 @@
 {% block header_title %}Manajemen Inventaris Toko{% endblock %}
 
 {% block content %}
+
+<div id="toastNotif" class="fixed top-5 right-5 z-[100] transform transition-all duration-300 translate-x-full opacity-0 flex items-center bg-white border-l-4 rounded-xl shadow-xl px-5 py-4 min-w-[280px]">
+    <i id="toastIcon" class="fas mr-3 text-xl"></i>
+    <div id="toastText" class="text-sm font-bold text-slate-700"></div>
+</div>
+
 <div id="modalTambah" class="fixed inset-0 z-50 hidden">
     <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeModal()"></div>
 
@@ -12,28 +18,30 @@
                 <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
                     <i class="fas fa-plus-circle text-orange-500"></i> Tambah Barang Baru
                 </h3>
-                <button onclick="closeModal()" class="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all">
+                <button type="button" onclick="closeModal()" class="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
-            <form id="formInventaris" class="p-6 space-y-4">
+            <form action="{{ url_for('tambah_stok') }}" method="POST" id="formInventaris" class="p-6 space-y-4" 
+                  onsubmit="handleFormSubmit('btnSimpan', 'Menyimpan...', 'Barang berhasil ditambahkan!')">
+                
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Nama Barang</label>
-                    <input type="text" id="nama_barang" required placeholder="Contoh: Semen Gresik" 
+                    <input type="text" name="nama_barang" required placeholder="Contoh: Semen Gresik" 
                         class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm">
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">SKU / Kode</label>
-                        <input type="text" id="sku" required placeholder="BRG-001" 
+                        <input type="text" name="sku" required placeholder="BRG-001" 
                             class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Kategori</label>
                         <div class="relative">
-                            <select id="kategori" class="w-full pl-4 pr-10 py-2.5 appearance-none cursor-pointer bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm">
+                            <select name="kategori" class="w-full pl-4 pr-10 py-2.5 appearance-none cursor-pointer bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm">
                                 <option value="Material Dasar">Material Dasar</option>
                                 <option value="Finishing">Finishing</option>
                                 <option value="Alat Kerja">Alat Kerja</option>
@@ -46,12 +54,12 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Jumlah Stok</label>
-                        <input type="number" id="stok" required placeholder="0" 
+                        <input type="number" name="stok" required placeholder="0" 
                             class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Satuan</label>
-                        <input type="text" id="satuan" required placeholder="Sak / Pcs" 
+                        <input type="text" name="satuan" required placeholder="Sak / Pcs" 
                             class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm">
                     </div>
                 </div>
@@ -71,11 +79,83 @@
     </div>
 </div>
 
+<div id="modalEdit" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeEditModal()"></div>
+
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-100 overflow-hidden transform transition-all animate-fade-in-up">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-blue-50/50">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-edit text-blue-500"></i> Edit Data Barang
+                </h3>
+                <button type="button" onclick="closeEditModal()" class="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form action="{{ url_for('edit_stok') }}" method="POST" id="formEditInventaris" class="p-6 space-y-4"
+                  onsubmit="handleFormSubmit('btnUpdate', 'Memperbarui...', 'Data barang berhasil diperbarui!')">
+                
+                <input type="hidden" name="id" id="edit_id">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Nama Barang</label>
+                    <input type="text" name="nama_barang" id="edit_nama_barang" required 
+                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">SKU / Kode</label>
+                        <input type="text" name="sku" id="edit_sku" required 
+                            class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Kategori</label>
+                        <div class="relative">
+                            <select name="kategori" id="edit_kategori" class="w-full pl-4 pr-10 py-2.5 appearance-none cursor-pointer bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                                <option value="Material Dasar">Material Dasar</option>
+                                <option value="Finishing">Finishing</option>
+                                <option value="Alat Kerja">Alat Kerja</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Jumlah Stok</label>
+                        <input type="number" name="stok" id="edit_stok" required 
+                            class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Satuan</label>
+                        <input type="text" name="satuan" id="edit_satuan" required 
+                            class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeEditModal()" 
+                        class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 hover:text-slate-800 transition-all text-sm">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnUpdate"
+                        class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-200 text-sm flex justify-center items-center gap-2">
+                        <span>Perbarui Data</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
     <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/30">
         <div class="relative w-full md:w-96 group flex items-center">
             <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-orange-500 transition-colors"></i>
-            <input type="text" id="searchInput" placeholder="Cari nama barang atau SKU..." class="w-full pl-12 pr-4 py-2.5 bg-white rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm">
+            <input type="text" placeholder="Cari nama barang atau SKU..." class="w-full pl-12 pr-4 py-2.5 bg-white rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm">
         </div>
         
         <button onclick="openModal()" class="w-full md:w-auto bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white px-5 py-2.5 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-sm">
@@ -95,136 +175,120 @@
                     <th class="px-6 py-4 border-b border-slate-100 text-center">Aksi</th>
                 </tr>
             </thead>
-            <tbody id="tabelBody" class="divide-y divide-slate-100 text-sm text-slate-700">
-                <tr>
-                    <td colspan="6" class="text-center py-8 text-slate-400">
-                        <i class="fas fa-spinner fa-spin mr-2"></i> Memuat data...
-                    </td>
-                </tr>
+            <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                {% if daftar_barang %}
+                    {% for barang in daftar_barang %}
+                    <tr class="hover:bg-slate-50/80 transition-colors group">
+                        <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">{{ barang.sku }}</td>
+                        <td class="px-6 py-4 font-bold text-slate-800">{{ barang.nama_barang }}</td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg text-xs font-bold">
+                                <i class="fas fa-tag text-[10px]"></i> {{ barang.kategori }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 font-bold {% if barang.stok > 10 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                            {{ barang.stok }}
+                        </td>
+                        <td class="px-6 py-4 text-slate-500">{{ barang.satuan }}</td>
+                        <td class="px-6 py-4 flex justify-center gap-2">
+                            <button onclick='openEditModal("{{ barang.id }}", "{{ barang.nama_barang }}", "{{ barang.sku }}", "{{ barang.kategori }}", "{{ barang.stok }}", "{{ barang.satuan }}")' class="w-8 h-8 flex items-center justify-center text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit">
+                                <i class="fas fa-edit text-sm"></i>
+                            </button>
+                            <button class="w-8 h-8 flex items-center justify-center text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Hapus">
+                                <i class="fas fa-trash text-sm"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-8 text-slate-400 italic">
+                            Belum ada data barang di sistem.
+                        </td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
 </div>
 
-<script type="module">
-    // 1. Import Firebase SDK
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, doc } 
-    from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+<script>
+    // --- NOTIFIKASI TOAST JAVASCRIPT ---
+    document.addEventListener("DOMContentLoaded", function() {
+        // Cek apakah ada pesan sukses yang disimpan sebelum halaman di-reload
+        let notifMsg = sessionStorage.getItem('notif_msg');
 
-    // 2. KONFIGURASI FIREBASE (GANTI DENGAN DATA DARI FIREBASE CONSOLE ANDA)
-    const firebaseConfig = {
-        apiKey: "API_KEY_ANDA_DISINI",
-        authDomain: "PROJECT_ID.firebaseapp.com",
-        projectId: "PROJECT_ID",
-        storageBucket: "PROJECT_ID.appspot.com",
-        messagingSenderId: "SENDER_ID",
-        appId: "APP_ID"
-    };
+        if (notifMsg) {
+            showToast(notifMsg);
+            // Hapus pesan agar tidak muncul lagi saat di-refresh manual
+            sessionStorage.removeItem('notif_msg');
+        }
+    });
 
-    // 3. Inisialisasi Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const inventarisCollection = collection(db, "inventaris"); // Nama koleksi di database
+    function showToast(message) {
+        const toast = document.getElementById('toastNotif');
+        const icon = document.getElementById('toastIcon');
+        const text = document.getElementById('toastText');
 
-    // --- FUNGSI MODAL UI ---
-    window.openModal = function() {
+        text.innerText = message;
+        toast.classList.add('border-emerald-500');
+        icon.className = 'fas fa-check-circle text-emerald-500 mr-3 text-xl';
+
+        // Tampilkan dengan slide in dari kanan
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full', 'opacity-0');
+        }, 100);
+        
+        // Sembunyikan otomatis setelah 3 detik
+        setTimeout(() => {
+            toast.classList.add('translate-x-full', 'opacity-0');
+        }, 3000);
+    }
+
+    function handleFormSubmit(btnId, loadingText, successMsg) {
+        // Simpan pesan ke memori JS agar dimunculkan setelah halaman selesai di-reload server
+        sessionStorage.setItem('notif_msg', successMsg);
+        
+        // Animasi tombol loading
+        let btn = document.getElementById(btnId);
+        btn.disabled = true;
+        btn.innerHTML = `<i class='fas fa-spinner fa-spin mr-2'></i> ${loadingText}`;
+    }
+
+
+    // --- FUNGSI MODAL ---
+    function openModal() {
         document.getElementById('modalTambah').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        document.getElementById('btnSimpan').disabled = false;
+        document.getElementById('btnSimpan').innerHTML = '<span>Simpan Barang</span>';
+    }
+
+    function closeModal() {
+        document.getElementById('modalTambah').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        document.getElementById('formInventaris').reset();
+    }
+
+    function openEditModal(id, nama, sku, kategori, stok, satuan) {
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_nama_barang').value = nama;
+        document.getElementById('edit_sku').value = sku;
+        document.getElementById('edit_kategori').value = kategori;
+        document.getElementById('edit_stok').value = stok;
+        document.getElementById('edit_satuan').value = satuan;
+
+        document.getElementById('btnUpdate').disabled = false;
+        document.getElementById('btnUpdate').innerHTML = '<span>Perbarui Data</span>';
+
+        document.getElementById('modalEdit').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
 
-    window.closeModal = function() {
-        document.getElementById('modalTambah').classList.add('hidden');
+    function closeEditModal() {
+        document.getElementById('modalEdit').classList.add('hidden');
         document.body.style.overflow = 'auto';
-        document.getElementById('formInventaris').reset(); // Reset form saat ditutup
-    }
-
-    // --- FUNGSI 1: KIRIM DATA KE FIREBASE (CREATE) ---
-    document.getElementById('formInventaris').addEventListener('submit', async (e) => {
-        e.preventDefault(); // Mencegah reload halaman
-        
-        const btnSimpan = document.getElementById('btnSimpan');
-        const originalText = btnSimpan.innerHTML;
-        // PERBAIKAN 3: Ikon spinner saat loading simpan
-        btnSimpan.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Menyimpan...';
-        btnSimpan.disabled = true;
-
-        try {
-            // Ambil value dari input
-            const newItem = {
-                nama_barang: document.getElementById('nama_barang').value,
-                sku: document.getElementById('sku').value,
-                kategori: document.getElementById('kategori').value,
-                stok: parseInt(document.getElementById('stok').value),
-                satuan: document.getElementById('satuan').value,
-                createdAt: new Date() // Untuk sorting
-            };
-
-            // Kirim ke Firestore
-            await addDoc(inventarisCollection, newItem);
-            
-            // Tutup modal
-            closeModal();
-
-        } catch (error) {
-            console.error("Error adding document: ", error);
-            alert("Gagal menyimpan: " + error.message);
-        } finally {
-            btnSimpan.innerHTML = originalText;
-            btnSimpan.disabled = false;
-        }
-    });
-
-    // --- FUNGSI 2: AMBIL DATA DARI FIREBASE (READ REALTIME) ---
-    // onSnapshot akan berjalan setiap kali ada perubahan di database
-    const q = query(inventarisCollection, orderBy("createdAt", "desc"));
-    
-    onSnapshot(q, (snapshot) => {
-        const tabelBody = document.getElementById('tabelBody');
-        tabelBody.innerHTML = ''; // Bersihkan tabel sebelum render ulang
-
-        if (snapshot.empty) {
-            tabelBody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Belum ada data barang.</td></tr>`;
-            return;
-        }
-
-        snapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            const id = docSnap.id; // ID unik dokumen firebase
-
-            // Buat baris tabel HTML
-            const row = `
-                <tr class="hover:bg-slate-50/80 transition-colors group">
-                    <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">${data.sku}</td>
-                    <td class="px-6 py-4 font-bold text-slate-800">${data.nama_barang}</td>
-                    <td class="px-6 py-4">
-                        <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg text-xs font-bold">
-                            <i class="fas fa-tag text-[10px]"></i> ${data.kategori}
-                        </span>
-                    </td>
-                    <td class="px-6 py-4 font-bold ${data.stok < 10 ? 'text-rose-600' : 'text-emerald-600'}">${data.stok}</td>
-                    <td class="px-6 py-4 text-slate-500">${data.satuan}</td>
-                    <td class="px-6 py-4 flex justify-center gap-2">
-                        <button onclick="hapusBarang('${id}')" class="w-8 h-8 flex items-center justify-center text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Hapus">
-                            <i class="fas fa-trash text-sm"></i>
-                        </button>
-                    </td>
-                </tr>
-            `;
-            tabelBody.insertAdjacentHTML('beforeend', row);
-        });
-    });
-
-    // --- FUNGSI 3: HAPUS DATA (DELETE) ---
-    window.hapusBarang = async function(id) {
-        if(confirm('Yakin ingin menghapus barang ini?')) {
-            try {
-                await deleteDoc(doc(db, "inventaris", id));
-            } catch (error) {
-                console.error("Gagal menghapus", error);
-                alert("Gagal menghapus data");
-            }
-        }
+        document.getElementById('formEditInventaris').reset();
     }
 </script>
 {% endblock %}

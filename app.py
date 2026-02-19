@@ -132,7 +132,124 @@ def dashboard():
     if not user: return redirect(url_for('login'))
     
     folder = get_role_folder(user['role'])
+
+    # === LOGIKA KHUSUS TOKO BANGUNAN ===
+    if folder == 'toko bangunan':
+        stat_total_item = 0
+        stat_stok_tersedia = 0
+        stat_pesanan_baru = 0
+        stat_siap_dikirim = 0
+        pesanan_terbaru = []
+        
+        try:
+            # 1. Hitung total jenis item dan jumlah stoknya dari Firestore
+            stok_docs = db.collection('stokbarang_toko').stream()
+            for doc in stok_docs:
+                stat_total_item += 1  # Hitung macam/jenis item
+                data = doc.to_dict()
+                
+                # Hitung TOTAL KUANTITAS (Sum dari seluruh angka 'stok' di database)
+                stat_stok_tersedia += data.get('stok', 0)
+                
+                # CATATAN: Jika Anda ingin angkanya adalah "Jumlah Jenis Barang yang Ready"
+                # (misalnya 15 merk barang tersedia), ganti baris atas dengan:
+                # if data.get('stok', 0) > 0:
+                #    stat_stok_tersedia += 1
+            
+            # 2. Ambil data list pesanan (akan otomatis 0 bila form pemesanan belum dibuat)
+            try:
+                pesanan_docs = db.collection('pesanan_toko').order_by('created_at', direction=firestore.Query.DESCENDING).limit(5).stream()
+                for doc in pesanan_docs:
+                    p_data = doc.to_dict()
+                    p_data['id'] = doc.id
+                    pesanan_terbaru.append(p_data)
+                    
+                    status = p_data.get('status', '')
+                    if status == 'Menunggu Proses':
+                        stat_pesanan_baru += 1
+                    elif status == 'Siap Dikirim' or status == 'Sedang Disiapkan':
+                        stat_siap_dikirim += 1
+            except Exception as e:
+                print(f"Collection pesanan belum ada atau error: {e}")
+                
+        except Exception as e:
+            print(f"Error fetching dashboard data: {e}")
+
+        # Kirimkan data ke template HTML
+        return render_template(f'{folder}/dashboard.html', 
+                               user=user,
+                               stat_total_item=stat_total_item,
+                               stat_stok_tersedia=stat_stok_tersedia,
+                               stat_pesanan_baru=stat_pesanan_baru,
+                               stat_siap_dikirim=stat_siap_dikirim,
+                               pesanan_terbaru=pesanan_terbaru)
+    
+    # Render untuk peran/role lain selain Toko Bangunan
     return render_template(f'{folder}/dashboard.html', user=user)
+
+@app.route('/api/tambah_desain', methods=['POST'])
+def tambah_desain():
+    user = get_current_user_info()
+    if not user: 
+        return redirect(url_for('login'))
+    
+    try:
+        nama_proyek = request.form.get('nama_proyek')
+        nama_klien = request.form.get('nama_klien')
+        kategori = request.form.get('kategori')
+        gaya_desain = request.form.get('gaya_desain')
+        
+        file_gambar = request.files.get('file_gambar')
+        file_base64 = ""
+        ukuran_str = "0 MB"
+        format_file = ".JPG"
+
+        if file_gambar and file_gambar.filename != '':
+            # 1. Dapatkan Ekstensi
+            filename = file_gambar.filename
+            format_file = "." + filename.rsplit('.', 1)[1].upper() if '.' in filename else '.JPG'
+            
+            # 2. Baca isi file byte
+            file_data = file_gambar.read()
+            
+            # 3. Hitung Ukuran File (Berapa MB)
+            size_mb = len(file_data) / (1024 * 1024)
+            ukuran_str = f"{size_mb:.2f} MB"
+            
+            # 4. Konversi ke Base64 (Data URI)
+            encoded_string = base64.b64encode(file_data).decode('utf-8')
+            mime_type = file_gambar.mimetype
+            file_base64 = f"data:{mime_type};base64,{encoded_string}"
+
+        # Format ID Berkas random
+        import random
+        id_berkas = f"DES-{random.randint(1000, 9999)}-X"
+
+        data_desain = {
+            'id_berkas': id_berkas,
+            'nama_proyek': nama_proyek,
+            'nama_klien': nama_klien,
+            'kategori': kategori,
+            'gaya_desain': gaya_desain,
+            'format': format_file,
+            'ukuran': ukuran_str,
+            'file_base64': file_base64, # Menyimpan Base64 ke Firestore
+            'status': 'Proses Drafting',
+            'jumlah_revisi': 0,
+            'nama_arsitek': user['name'],
+            'created_by_uid': user['uid'],
+            'created_at': firestore.SERVER_TIMESTAMP
+        }
+
+        # Simpan ke Firestore
+        db.collection('berkas_desain').add(data_desain)
+
+    except Exception as e:
+        # Peringatan: Dokumen Firestore punya limit max 1 MB per dokumen.
+        # Jika upload base64 gagal/error, kemungkinan file terlalu besar.
+        print(f"Error saat menyimpan desain ke Firestore: {e}")
+        
+    return redirect(url_for('desain'))
 
 @app.route('/stok')
 def stok_barang():
@@ -140,7 +257,19 @@ def stok_barang():
     if not user: return redirect(url_for('login'))
         
     folder = get_role_folder(user['role'])
-    return render_template(f'{folder}/stok.html', user=user)
+    
+    # Menarik data dari Firestore
+    daftar_barang = []
+    try:
+        docs = db.collection('stokbarang_toko').order_by('created_at', direction=firestore.Query.DESCENDING).stream()
+        for doc in docs:
+            item = doc.to_dict()
+            item['id'] = doc.id
+            daftar_barang.append(item)
+    except Exception as e:
+        print(f"Error fetching data: {e}")
+        
+    return render_template(f'{folder}/stok.html', user=user, daftar_barang=daftar_barang)
 
 @app.route('/chat')
 def chat():
@@ -166,15 +295,29 @@ def laporan():
     folder = get_role_folder(user['role'])
     return render_template(f'{folder}/laporan.html', user=user)
 
-# --- RUTE BARU YANG DITAMBAHKAN ---
-
 @app.route('/desain')
 def desain():
     user = get_current_user_info()
     if not user: return redirect(url_for('login'))
     
     folder = get_role_folder(user['role'])
-    return render_template(f'{folder}/desain.html', user=user)
+    
+    # 1. Siapkan list kosong untuk menampung data
+    daftar_desain = []
+    
+    # 2. Tarik data dari Firestore (Koleksi 'berkas_desain')
+    try:
+        # Mengambil data dan diurutkan dari yang terbaru
+        docs = db.collection('berkas_desain').order_by('created_at', direction=firestore.Query.DESCENDING).stream()
+        for doc in docs:
+            item = doc.to_dict()
+            item['id'] = doc.id # Menyimpan ID dokumen Firestore
+            daftar_desain.append(item)
+    except Exception as e:
+        print(f"Error fetching data desain: {e}")
+        
+    # 3. Kirimkan variabel 'daftar_desain' ke file desain.html
+    return render_template(f'{folder}/desain.html', user=user, daftar_desain=daftar_desain)
 
 @app.route('/logrevisi')
 def logrevisi():
@@ -183,9 +326,6 @@ def logrevisi():
     
     folder = get_role_folder(user['role'])
     return render_template(f'{folder}/logrevisi.html', user=user)
-
-
-# --- RUTE BARU YANG DITAMBAHKAN ---
 
 @app.route('/alat')
 def alat():
@@ -203,7 +343,6 @@ def logpekerjaan():
     folder = get_role_folder(user['role'])
     return render_template(f'{folder}/logpekerjaan.html', user=user)
 
-
 @app.route('/manajemenproyek')
 def manajemenproyek():
     user = get_current_user_info()
@@ -212,9 +351,6 @@ def manajemenproyek():
     folder = get_role_folder(user['role'])
     return render_template(f'{folder}/manajemenproyek.html', user=user)
 
-# ==========================================
-# ROUTES: AKSI & FUNGSI TAMBAHAN
-# ==========================================
 @app.route('/profil')
 def profil():
     user = get_current_user_info()
@@ -222,28 +358,77 @@ def profil():
     flash("Halaman profil sedang dalam pengembangan.", "info")
     return redirect(url_for('dashboard'))
 
+# ==========================================
+# API ROUTES (CRUD FIREBASE)
+# ==========================================
+
+# 1. TAMBAH STOK
 @app.route('/api/tambah_stok', methods=['POST'])
 def tambah_stok():
     user = get_current_user_info()
-    if not user: return redirect(url_for('login'))
-    nama_barang = request.form.get('nama_barang')
-    flash(f"{nama_barang} berhasil ditambahkan ke sistem!", "success")
+    if not user: 
+        return redirect(url_for('login'))
+    
+    try:
+        nama_barang = request.form.get('nama_barang')
+        sku = request.form.get('sku')
+        kategori = request.form.get('kategori')
+        stok = request.form.get('stok')
+        satuan = request.form.get('satuan')
+
+        stok_int = int(stok) if stok else 0
+
+        data_barang = {
+            'nama_barang': nama_barang,
+            'sku': sku,
+            'kategori': kategori,
+            'stok': stok_int,
+            'satuan': satuan,
+            'created_by_uid': user['uid'], 
+            'created_by_name': user['name'],
+            'created_at': firestore.SERVER_TIMESTAMP
+        }
+
+        db.collection('stokbarang_toko').add(data_barang)
+        # Baris flash() pesan sukses DIHAPUS agar tidak muncul notifikasi tersimpan
+    except Exception as e:
+        print(f"Error saat menyimpan barang ke Firestore: {e}")
+        # Pesan error tetap dipertahankan untuk berjaga-jaga jika gagal simpan
+        flash("Gagal menambahkan barang. Terjadi kesalahan pada server.", "error")
+        
     return redirect(url_for('stok_barang'))
 
-@app.route('/api/update_status', methods=['POST'])
-def update_status():
+# 2. EDIT STOK
+@app.route('/api/edit_stok', methods=['POST'])
+def edit_stok():
     user = get_current_user_info()
     if not user: 
-        return jsonify({"status": "error", "message": "Unauthorized"}), 401
+        return redirect(url_for('login'))
     
-    data = request.get_json()
-    item_id = data.get('id')
-    status_baru = data.get('status')
-    
-    return jsonify({
-        "status": "success", 
-        "message": f"Status item {item_id} berhasil diubah menjadi {status_baru}"
-    })
+    try:
+        item_id = request.form.get('id')
+        nama_barang = request.form.get('nama_barang')
+        
+        stok_int = request.form.get('stok')
+        stok_int = int(stok_int) if stok_int else 0
+
+        data_update = {
+            'nama_barang': nama_barang,
+            'sku': request.form.get('sku'),
+            'kategori': request.form.get('kategori'),
+            'stok': stok_int,
+            'satuan': request.form.get('satuan')
+        }
+
+        db.collection('stokbarang_toko').document(item_id).update(data_update)
+        # Baris flash() pesan sukses DIHAPUS agar tidak muncul notifikasi edit sukses
+
+    except Exception as e:
+        print(f"Error saat edit barang di Firestore: {e}")
+        # Pesan error tetap dipertahankan
+        flash("Gagal memperbarui barang. Terjadi kesalahan server.", "error")
+        
+    return redirect(url_for('stok_barang'))
 
 # ==========================================
 # ERROR HANDLER 
