@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block header_title %}Log Progres & Revisi Desain{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col h-full min-h-[500px]">
+    
+    <div class="p-6 border-b border-gray-100 flex flex-wrap gap-4 justify-between items-center bg-white sticky top-0 z-20">
+        <div class="flex gap-2">
+            <button class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition shadow-sm">
+                <i class="fas fa-calendar-alt text-slate-400"></i>
+                <span>Filter Tanggal</span>
+            </button>
+            
+            <button class="flex items-center gap-2 px-4 py-2 border border-slate-200 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-50 hover:border-slate-300 transition shadow-sm">
+                <i class="fas fa-filter text-slate-400"></i>
+                <span>Semua Tahapan</span>
+                <i class="fas fa-chevron-down ml-1 text-[10px]"></i>
+            </button>
+        </div>
+
+        <button class="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-xs font-bold hover:bg-green-700 hover:shadow-lg hover:shadow-green-900/20 transition transform active:scale-95">
+            <i class="fas fa-file-excel"></i>
+            <span>Export Log PDF</span>
+        </button>
+    </div>
+    
+    <div class="overflow-visible flex-1"> 
+        <table class="w-full text-left border-collapse">
+            <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold sticky top-0 z-10 border-b border-slate-200">
+                <tr>
+                    <th class="px-6 py-4">Waktu</th>
+                    <th class="px-6 py-4">ID Proyek</th>
+                    <th class="px-6 py-4">Nama Proyek</th>
+                    <th class="px-6 py-4">Tahapan</th>
+                    <th class="px-6 py-4">Revisi</th>
+                    <th class="px-6 py-4">Catatan Klien</th>
+                    <th class="px-6 py-4 w-40">Status</th> 
+                    <th class="px-6 py-4">Arsitek/Drafter</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm text-slate-700">
+                
+                <tr class="hover:bg-slate-50 transition group">
+                    <td class="px-6 py-4 text-slate-500 text-xs">10:45</td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-500">PRJ-24A1</td>
+                    <td class="px-6 py-4 font-bold text-slate-800">Desain Ruko 3 Lantai</td>
+                    <td class="px-6 py-4"><span class="bg-blue-100 text-blue-600 px-2.5 py-1 rounded-md text-xs font-bold border border-blue-200">Konsep Awal</span></td>
+                    <td class="px-6 py-4 font-bold text-slate-600">Rev. 0</td>
+                    <td class="px-6 py-4 text-slate-500 text-xs truncate max-w-[150px]">Penentuan fasad depan...</td>
+                    
+                    <td class="px-6 py-4 relative">
+                        <div class="relative inline-block text-left">
+                            <button onclick="toggleDropdown('dropdown-1')" id="btn-1" 
+                                class="flex items-center justify-between w-32 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border bg-yellow-100 text-yellow-700 border-yellow-200 hover:shadow-md hover:scale-105 active:scale-95 focus:outline-none">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-palette"></i>
+                                    <span>Drafting</span>
+                                </div>
+                                <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
+                            </button>
+
+                            <div id="dropdown-1" class="hidden absolute left-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden animation-fade-in">
+                                <div class="py-1">
+                                    <a href="javascript:void(0)" onclick="setStatus('btn-1', 'dropdown-1', 'proses')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-yellow-50 hover:text-yellow-700 transition">
+                                        <i class="fas fa-palette text-yellow-500 w-4"></i> Drafting
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="setStatus('btn-1', 'dropdown-1', 'selesai')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-green-50 hover:text-green-700 transition">
+                                        <i class="fas fa-check-double text-green-500 w-4"></i> Disetujui
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="setStatus('btn-1', 'dropdown-1', 'batal')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-red-50 hover:text-red-700 transition">
+                                        <i class="fas fa-pause-circle text-red-500 w-4"></i> Ditunda (Hold)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="px-6 py-4 text-xs font-bold text-slate-600">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px]">A</div>
+                            Andi (Lead)
+                        </div>
+                    </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50 transition group">
+                    <td class="px-6 py-4 text-slate-500 text-xs">09:12</td>
+                    <td class="px-6 py-4 font-mono text-xs text-slate-500">PRJ-24B3</td>
+                    <td class="px-6 py-4 font-bold text-slate-800">Interior Villa Bali</td>
+                    <td class="px-6 py-4"><span class="bg-purple-100 text-purple-600 px-2.5 py-1 rounded-md text-xs font-bold border border-purple-200">3D Rendering</span></td>
+                    <td class="px-6 py-4 font-bold text-red-600">Rev. 2</td>
+                    <td class="px-6 py-4 text-slate-500 text-xs">Pencahayaan kurang natural</td>
+                    
+                    <td class="px-6 py-4 relative">
+                        <div class="relative inline-block text-left">
+                            <button onclick="toggleDropdown('dropdown-2')" id="btn-2" 
+                                class="flex items-center justify-between w-32 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border bg-green-100 text-green-700 border-green-200 hover:shadow-md hover:scale-105 active:scale-95 focus:outline-none">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-check-double"></i>
+                                    <span>Disetujui</span>
+                                </div>
+                                <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
+                            </button>
+
+                            <div id="dropdown-2" class="hidden absolute left-0 mt-2 w-40 bg-white rounded-xl shadow-xl border border-gray-100 z-50 overflow-hidden">
+                                <div class="py-1">
+                                    <a href="javascript:void(0)" onclick="setStatus('btn-2', 'dropdown-2', 'proses')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-yellow-50 hover:text-yellow-700 transition">
+                                        <i class="fas fa-palette text-yellow-500 w-4"></i> Drafting
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="setStatus('btn-2', 'dropdown-2', 'selesai')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-green-50 hover:text-green-700 transition">
+                                        <i class="fas fa-check-double text-green-500 w-4"></i> Disetujui
+                                    </a>
+                                    <a href="javascript:void(0)" onclick="setStatus('btn-2', 'dropdown-2', 'batal')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-red-50 hover:text-red-700 transition">
+                                        <i class="fas fa-pause-circle text-red-500 w-4"></i> Ditunda (Hold)
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+
+                    <td class="px-6 py-4 text-xs font-bold text-slate-600">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px]">S</div>
+                            Siti (3D)
+                        </div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="p-4 border-t border-gray-100 bg-slate-50 flex justify-between items-center text-xs text-slate-500">
+        <p>Menampilkan <span class="font-bold text-slate-700">1-2</span> dari <span class="font-bold text-slate-700">24</span> progres</p>
+        <div class="flex gap-2">
+            <button class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 hover:text-slate-700 transition shadow-sm disabled:opacity-50"><i class="fas fa-chevron-left mr-1"></i> Prev</button>
+            <div class="flex gap-1">
+                <button class="w-8 h-8 flex items-center justify-center bg-orange-600 text-white rounded-lg font-bold shadow-md shadow-orange-200">1</button>
+            </div>
+            <button class="px-3 py-1.5 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 hover:text-slate-700 transition shadow-sm">Next <i class="fas fa-chevron-right ml-1"></i></button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDropdown(dropdownId) {
+        const allDropdowns = document.querySelectorAll('[id^="dropdown-"]');
+        allDropdowns.forEach(el => {
+            if (el.id !== dropdownId) el.classList.add('hidden');
+        });
+        const dropdown = document.getElementById(dropdownId);
+        dropdown.classList.toggle('hidden');
+    }
+
+    function setStatus(btnId, dropdownId, status) {
+        const btn = document.getElementById(btnId);
+        const iconDiv = btn.querySelector('div i');
+        const textSpan = btn.querySelector('div span');
+
+        btn.className = "flex items-center justify-between w-32 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border hover:shadow-md hover:scale-105 active:scale-95 focus:outline-none";
+
+        if (status === 'proses') {
+            btn.classList.add('bg-yellow-100', 'text-yellow-700', 'border-yellow-200');
+            iconDiv.className = "fas fa-palette";
+            textSpan.innerText = "Drafting";
+        } else if (status === 'selesai') {
+            btn.classList.add('bg-green-100', 'text-green-700', 'border-green-200');
+            iconDiv.className = "fas fa-check-double";
+            textSpan.innerText = "Disetujui";
+        } else if (status === 'batal') {
+            btn.classList.add('bg-red-100', 'text-red-700', 'border-red-200');
+            iconDiv.className = "fas fa-pause-circle";
+            textSpan.innerText = "Ditunda";
+        }
+
+        document.getElementById(dropdownId).classList.add('hidden');
+    }
+
+    window.onclick = function(event) {
+        if (!event.target.closest('.relative.inline-block')) {
+            document.querySelectorAll('[id^="dropdown-"]').forEach(el => el.classList.add('hidden'));
+        }
+    }
+</script>
+{% endblock %}

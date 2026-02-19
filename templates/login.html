@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block title %}Login - Rakitin{% endblock %}
+
 {% block content %}
 <div class="min-h-screen flex bg-white">
     
@@ -23,6 +25,7 @@
                 <p class="mt-2 text-sm text-slate-500">Masukkan kredensial Anda untuk mengakses dashboard Rakitin.</p>
             </div>
 
+            {# Menampilkan Flash Message jika ada #}
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, message in messages %}
@@ -51,8 +54,7 @@
                     <div>
                         <div class="flex items-center justify-between mb-1">
                             <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
-                            <a href="#" class="text-sm font-medium text-orange-600 hover:text-orange-500">Lupa password?</a>
-                        </div>
+                            </div>
                         <div class="relative rounded-md shadow-sm">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fas fa-lock text-slate-400"></i>
@@ -79,14 +81,11 @@
 
             <div class="text-center pt-4">
                 <p class="text-sm text-slate-600">
-                    Belum punya akun? <a href="/register" class="font-bold text-orange-600 hover:text-orange-700 transition duration-200">Daftar di sini</a>
+                    Belum punya akun? <a href="{{ url_for('register') }}" class="font-bold text-orange-600 hover:text-orange-700 transition duration-200">Daftar di sini</a>
                 </p>
             </div>
             
-            <div class="text-center mt-6">
-                <p class="text-xs text-slate-400">&copy; 2026 Rakitin. All rights reserved.</p>
             </div>
-        </div>
     </div>
 </div>
 
