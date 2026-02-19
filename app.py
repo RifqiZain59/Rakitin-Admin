@@ -1,5 +1,4 @@
 import os
-import requests 
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import firebase_admin
 from firebase_admin import credentials, auth, firestore
@@ -9,8 +8,6 @@ app = Flask(__name__)
 app.secret_key = 'rahasia_rakitin_2026' 
 
 # --- KONFIGURASI FIREBASE ---
-FIREBASE_WEB_API_KEY = "AIzaSyCCwuYko3T7iyB81vCZE34FhL8zaro1Ly0"
-
 try:
     if not firebase_admin._apps:
         cred = credentials.Certificate("serviceAccountKey.json")
@@ -42,22 +39,16 @@ def get_current_user_info():
     }
 
 def get_role_folder(role):
-    # Fungsi ini sudah disesuaikan PERSIS dengan nama folder di VS Code kamu
     if not role:
         return 'arsitektur'
     
     role_bersih = role.lower().strip()
-    
     if role_bersih in ['toko bangunan', 'toko_bangunan']:
-        return 'toko bangunan' # Membaca folder dengan spasi sesuai screenshot
-    elif role_bersih in ['arsitektur', 'arsitekur']:
+        return 'toko bangunan'
+    elif role_bersih == 'arsitekur': # Jika terjadi typo di database
         return 'arsitektur'
-    elif role_bersih == 'kontraktor':
-        return 'kontraktor'
-    elif role_bersih == 'tukang':
-        return 'tukang'
         
-    return role_bersih
+    return role_bersih.replace(' ', '_')
 
 # ==========================================
 # ROUTES: AUTHENTICATION
@@ -75,39 +66,22 @@ def login():
 
     if request.method == 'POST':
         email = request.form.get('email')
-        password = request.form.get('password')
-
         try:
-            url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={FIREBASE_WEB_API_KEY}"
-            payload = {
-                "email": email,
-                "password": password,
-                "returnSecureToken": True
-            }
-            response = requests.post(url, json=payload)
+            user = auth.get_user_by_email(email)
+            user_data = get_user_profile(user.uid)
             
-            if response.status_code == 200:
-                data = response.json()
-                uid = data['localId']
-                
-                user_data = get_user_profile(uid)
-                
-                session['user'] = uid
-                session['email'] = email
-                session['name'] = user_data.get('name', 'User') if user_data else 'User'
-                session['role'] = user_data.get('role', 'arsitektur') if user_data else 'arsitektur'
+            if user_data:
+                session['user'] = user.uid
+                session['email'] = user.email
+                session['name'] = user_data.get('name', 'User')
+                session['role'] = user_data.get('role', 'arsitektur')
                 
                 flash(f"Selamat datang kembali, {session['name']}!", "success")
                 return redirect(url_for('dashboard'))
             else:
-                error_message = response.json().get('error', {}).get('message', '')
-                if error_message == 'EMAIL_NOT_FOUND':
-                    flash("Email tidak terdaftar.", "error")
-                elif error_message in ['INVALID_PASSWORD', 'INVALID_LOGIN_CREDENTIALS']:
-                    flash("Password salah.", "error")
-                else:
-                    flash("Kredensial tidak valid.", "error")
-                    
+                flash("Data profil tidak ditemukan di database.", "error")
+        except firebase_admin._auth_utils.UserNotFoundError:
+            flash("Email tidak terdaftar.", "error")
         except Exception as e:
             flash(f"Terjadi kesalahan saat login: {str(e)}", "error")
             
@@ -138,8 +112,6 @@ def register():
             })
             flash("Akun berhasil dibuat! Silakan login.", "success")
             return redirect(url_for('login'))
-        except auth.EmailAlreadyExistsError:
-            flash("Email ini sudah terdaftar. Silakan gunakan email lain atau login.", "error")
         except Exception as e:
             flash(f"Pendaftaran gagal: {str(e)}", "error")
             
@@ -194,6 +166,8 @@ def laporan():
     folder = get_role_folder(user['role'])
     return render_template(f'{folder}/laporan.html', user=user)
 
+# --- RUTE BARU YANG DITAMBAHKAN ---
+
 @app.route('/desain')
 def desain():
     user = get_current_user_info()
@@ -210,6 +184,9 @@ def logrevisi():
     folder = get_role_folder(user['role'])
     return render_template(f'{folder}/logrevisi.html', user=user)
 
+
+# --- RUTE BARU YANG DITAMBAHKAN ---
+
 @app.route('/alat')
 def alat():
     user = get_current_user_info()
@@ -225,6 +202,7 @@ def logpekerjaan():
     
     folder = get_role_folder(user['role'])
     return render_template(f'{folder}/logpekerjaan.html', user=user)
+
 
 @app.route('/manajemenproyek')
 def manajemenproyek():
@@ -272,16 +250,15 @@ def update_status():
 # ==========================================
 @app.errorhandler(404)
 def page_not_found(e):
-    # Disesuaikan agar jika template tidak ditemukan, tidak langsung error 500
     user = get_current_user_info()
     if user:
-        flash("Halaman yang Anda tuju tidak ditemukan untuk profesi Anda.", "error")
+        flash("Halaman yang Anda tuju tidak ditemukan.", "error")
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
 
 @app.errorhandler(500)
 def internal_server_error(e):
-    flash("Terjadi kesalahan pada server (Template tidak ditemukan). Silakan cek URL Anda.", "error")
+    flash("Terjadi kesalahan pada server. Silakan coba lagi.", "error")
     user = get_current_user_info()
     if user:
         return redirect(url_for('dashboard'))
