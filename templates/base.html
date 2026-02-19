@@ -44,13 +44,13 @@
                 {% set role = user.role.lower().replace(' ', '_') if user.role else '' %}
 
                 {% if role == 'arsitektur' %}
-                    <a href="{{ url_for('desain') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'stok_barang' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                    <a href="{{ url_for('desain') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'desain' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                         <i class="fas fa-folder-open w-6 mr-3"></i> <span class="font-medium">Aset & Desain</span>
                     </a>
                     <a href="{{ url_for('chat') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'chat' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                         <i class="fas fa-comments w-6 mr-3"></i> <span class="font-medium">Diskusi Klien</span>
                     </a>
-                    <a href="{{ url_for('logrevisi') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'log_aktivitas' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                    <a href="{{ url_for('logrevisi') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'logrevisi' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                         <i class="fas fa-history w-6 mr-3"></i> <span class="font-medium">Log Revisi</span>
                     </a>
                     <a href="{{ url_for('laporan') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'laporan' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
@@ -58,11 +58,11 @@
                     </a>
 
                 {% elif role == 'kontraktor' %}
-                    <a href="{{ url_for('stok_barang') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'stok_barang' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
-                        <i class="fas fa-boxes w-6 mr-3"></i> <span class="font-medium">Material Proyek</span>
+                    <a href="{{ url_for('manajemenproyek') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'manajemenproyek' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                        <i class="fas fa-boxes w-6 mr-3"></i> <span class="font-medium">Manajemen Proyek</span>
                     </a>
                     <a href="{{ url_for('chat') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'chat' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
-                        <i class="fas fa-walkie-talkie w-6 mr-3"></i> <span class="font-medium">Komunikasi Tim</span>
+                        <i class="fas fa-walkie-talkie w-6 mr-3"></i> <span class="font-medium">Chat</span>
                     </a>
                     <a href="{{ url_for('log_aktivitas') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'log_aktivitas' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                         <i class="fas fa-clipboard-list w-6 mr-3"></i> <span class="font-medium">Log Proyek</span>
@@ -72,13 +72,13 @@
                     </a>
 
                 {% elif role == 'tukang' %}
-                    <a href="{{ url_for('stok_barang') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'stok_barang' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
-                        <i class="fas fa-toolbox w-6 mr-3"></i> <span class="font-medium">Alat & Bahan</span>
+                    <a href="{{ url_for('alat') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'alat' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                        <i class="fas fa-toolbox w-6 mr-3"></i> <span class="font-medium">Alat</span>
                     </a>
                     <a href="{{ url_for('chat') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'chat' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
-                        <i class="fas fa-users w-6 mr-3"></i> <span class="font-medium">Koordinasi</span>
+                        <i class="fas fa-users w-6 mr-3"></i> <span class="font-medium">Chat</span>
                     </a>
-                    <a href="{{ url_for('log_aktivitas') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'log_aktivitas' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
+                    <a href="{{ url_for('logpekerjaan') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'logpekerjaan' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                         <i class="fas fa-hard-hat w-6 mr-3"></i> <span class="font-medium">Log Pekerjaan</span>
                     </a>
                     <a href="{{ url_for('laporan') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'laporan' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
@@ -87,13 +87,13 @@
 
                 {% elif role == 'toko_bangunan' or role == 'toko bangunan' %}
                     <a href="{{ url_for('stok_barang') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'stok_barang' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
-                        <i class="fas fa-store w-6 mr-3"></i> <span class="font-medium">Inventaris Toko</span>
+                        <i class="fas fa-store w-6 mr-3"></i> <span class="font-medium">Stok</span>
                     </a>
                     <a href="{{ url_for('chat') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'chat' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
-                        <i class="fas fa-headset w-6 mr-3"></i> <span class="font-medium">Pesan Pelanggan</span>
+                        <i class="fas fa-headset w-6 mr-3"></i> <span class="font-medium">Chat</span>
                     </a>
                     <a href="{{ url_for('log_aktivitas') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'log_aktivitas' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
-                        <i class="fas fa-truck-loading w-6 mr-3"></i> <span class="font-medium">Riwayat Kirim</span>
+                        <i class="fas fa-truck-loading w-6 mr-3"></i> <span class="font-medium">Logs</span>
                     </a>
                     <a href="{{ url_for('laporan') }}" class="flex items-center px-4 py-3 rounded-lg transition {{ 'bg-orange-600 text-white shadow-lg' if request.endpoint == 'laporan' else 'text-slate-400 hover:bg-slate-800 hover:text-white' }}">
                         <i class="fas fa-receipt w-6 mr-3"></i> <span class="font-medium">Laporan Penjualan</span>

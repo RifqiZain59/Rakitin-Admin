@@ -1,65 +1,172 @@
 {% extends "base.html" %}
 
-{% block header_title %}Manajemen Aset & Lisensi Desain{% endblock %}
+{% block header_title %}Manajemen Berkas & Hasil Desain{% endblock %}
 
 {% block content %}
-<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-    <div class="p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="relative w-full md:w-96">
-            <i class="fas fa-search absolute left-3 top-3 text-slate-400"></i>
-            <input type="text" placeholder="Cari nama lisensi, aset, atau kode..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-slate-200 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
+<div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    
+    <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/30">
+        <div class="relative w-full md:w-96 group">
+            <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 group-focus-within:text-orange-500 transition-colors"></i>
+            <input type="text" placeholder="Cari nama proyek, klien, atau ID berkas..." class="w-full pl-11 pr-4 py-2.5 bg-white rounded-xl border border-slate-200 text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm">
         </div>
-        <button class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg font-bold shadow-sm transition flex items-center gap-2">
-            <i class="fas fa-plus"></i> Tambah Aset
-        </button>
+        <div class="flex w-full md:w-auto gap-3">
+            <button class="flex-1 md:flex-none bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-orange-600 px-5 py-2.5 rounded-xl font-bold shadow-sm transition-all flex items-center justify-center gap-2 text-sm">
+                <i class="fas fa-folder-open"></i> Aset Lisensi
+            </button>
+            <button class="flex-1 md:flex-none bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 text-white px-5 py-2.5 rounded-xl font-bold shadow-sm hover:shadow-orange-500/30 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 text-sm">
+                <i class="fas fa-cloud-upload-alt"></i> Upload Desain
+            </button>
+        </div>
     </div>
 
-    <table class="w-full text-left">
-        <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
-            <tr>
-                <th class="px-6 py-4">Kode Aset</th>
-                <th class="px-6 py-4">Nama Item / Software</th>
-                <th class="px-6 py-4">Kategori</th>
-                <th class="px-6 py-4">Ketersediaan</th>
-                <th class="px-6 py-4">Satuan</th>
-                <th class="px-6 py-4 text-center">Aksi</th>
-            </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100 text-sm text-slate-700">
-            <tr class="hover:bg-slate-50 transition">
-                <td class="px-6 py-4 font-mono text-xs text-slate-500">LIS-001</td>
-                <td class="px-6 py-4 font-bold">AutoCAD Architecture 2024</td>
-                <td class="px-6 py-4"><span class="bg-indigo-100 text-indigo-600 px-2 py-1 rounded text-xs font-bold">Lisensi Software</span></td>
-                <td class="px-6 py-4 font-bold text-green-600">5 / 5 Aktif</td>
-                <td class="px-6 py-4 text-slate-500">User PC</td>
-                <td class="px-6 py-4 flex justify-center gap-2">
-                    <button class="p-2 text-blue-600 hover:bg-blue-50 rounded"><i class="fas fa-edit"></i></button>
-                    <button class="p-2 text-red-600 hover:bg-red-50 rounded"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-            <tr class="hover:bg-slate-50 transition">
-                <td class="px-6 py-4 font-mono text-xs text-slate-500">AST-3D-12</td>
-                <td class="px-6 py-4 font-bold">Bundle 3D Asset Interior Minimalis</td>
-                <td class="px-6 py-4"><span class="bg-gray-100 text-slate-600 px-2 py-1 rounded text-xs font-bold">Aset Digital</span></td>
-                <td class="px-6 py-4 font-bold text-slate-700">Tersedia</td>
-                <td class="px-6 py-4 text-slate-500">Server Internal</td>
-                <td class="px-6 py-4 flex justify-center gap-2">
-                    <button class="p-2 text-blue-600 hover:bg-blue-50 rounded"><i class="fas fa-edit"></i></button>
-                    <button class="p-2 text-red-600 hover:bg-red-50 rounded"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-            <tr class="hover:bg-slate-50 transition">
-                <td class="px-6 py-4 font-mono text-xs text-slate-500">PRT-004</td>
-                <td class="px-6 py-4 font-bold">Kertas Plotter A0 HVS</td>
-                <td class="px-6 py-4"><span class="bg-orange-100 text-orange-600 px-2 py-1 rounded text-xs font-bold">Material Cetak</span></td>
-                <td class="px-6 py-4 font-bold text-red-600">2</td>
-                <td class="px-6 py-4 text-slate-500">Roll</td>
-                <td class="px-6 py-4 flex justify-center gap-2">
-                    <button class="p-2 text-blue-600 hover:bg-blue-50 rounded"><i class="fas fa-edit"></i></button>
-                    <button class="p-2 text-red-600 hover:bg-red-50 rounded"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left whitespace-nowrap">
+            <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-bold tracking-wider">
+                <tr>
+                    <th class="px-6 py-4 border-b border-slate-100">ID Berkas</th>
+                    <th class="px-6 py-4 border-b border-slate-100">Informasi Proyek</th>
+                    <th class="px-6 py-4 border-b border-slate-100">Kategori</th>
+                    <th class="px-6 py-4 border-b border-slate-100">Format & Ukuran</th>
+                    <th class="px-6 py-4 border-b border-slate-100">Status</th>
+                    <th class="px-6 py-4 border-b border-slate-100 text-center">Aksi</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                
+                <tr class="hover:bg-slate-50/80 transition-colors group">
+                    <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">DES-2401-A</td>
+                    <td class="px-6 py-4">
+                        <p class="font-bold text-slate-800">Blueprint Ruko 3 Lantai</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Klien: PT. Makmur Jaya</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center gap-1.5 bg-blue-50 text-blue-700 border border-blue-100 px-2.5 py-1 rounded-lg text-xs font-bold">
+                            <i class="fas fa-drafting-compass text-[10px]"></i> Gambar Kerja (2D)
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-file-pdf text-red-500 text-lg"></i>
+                            <div>
+                                <p class="font-bold text-slate-700">.PDF</p>
+                                <p class="text-xs text-slate-400">12.4 MB</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-emerald-600 font-bold flex items-center gap-1.5 text-xs">
+                            <i class="fas fa-check-circle"></i> Final / Disetujui
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 flex justify-center gap-2">
+                        <button class="w-8 h-8 flex items-center justify-center text-emerald-600 bg-emerald-50 hover:bg-emerald-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Download">
+                            <i class="fas fa-download text-sm"></i>
+                        </button>
+                        <button class="w-8 h-8 flex items-center justify-center text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button class="w-8 h-8 flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Hapus">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50/80 transition-colors group">
+                    <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">DES-2401-B</td>
+                    <td class="px-6 py-4">
+                        <p class="font-bold text-slate-800">Render Eksterior Villa Bali</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Klien: Bpk. Hendra Saputra</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center gap-1.5 bg-purple-50 text-purple-700 border border-purple-100 px-2.5 py-1 rounded-lg text-xs font-bold">
+                            <i class="fas fa-cube text-[10px]"></i> 3D Render
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-file-image text-blue-500 text-lg"></i>
+                            <div>
+                                <p class="font-bold text-slate-700">.PNG (ZIP)</p>
+                                <p class="text-xs text-slate-400">145.8 MB</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-amber-600 font-bold flex items-center gap-1.5 text-xs">
+                            <i class="fas fa-clock"></i> Menunggu Feedback
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 flex justify-center gap-2">
+                        <button class="w-8 h-8 flex items-center justify-center text-emerald-600 bg-emerald-50 hover:bg-emerald-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Download">
+                            <i class="fas fa-download text-sm"></i>
+                        </button>
+                        <button class="w-8 h-8 flex items-center justify-center text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button class="w-8 h-8 flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Hapus">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </td>
+                </tr>
+
+                <tr class="hover:bg-slate-50/80 transition-colors group">
+                    <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">DES-2402-A</td>
+                    <td class="px-6 py-4">
+                        <p class="font-bold text-slate-800">Layout Ruang Meeting</p>
+                        <p class="text-xs text-slate-500 mt-0.5">Klien: CV. Abadi Karya</p>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-700 border border-slate-200 px-2.5 py-1 rounded-lg text-xs font-bold">
+                            <i class="fas fa-layer-group text-[10px]"></i> Konsep & Sketsa
+                        </span>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                            <i class="fas fa-file-alt text-slate-500 text-lg"></i>
+                            <div>
+                                <p class="font-bold text-slate-700">.SKP</p>
+                                <p class="text-xs text-slate-400">45.2 MB</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="text-rose-600 font-bold flex items-center gap-1.5 text-xs">
+                            <i class="fas fa-exclamation-circle"></i> Butuh Revisi
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 flex justify-center gap-2">
+                        <button class="w-8 h-8 flex items-center justify-center text-emerald-600 bg-emerald-50 hover:bg-emerald-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Download">
+                            <i class="fas fa-download text-sm"></i>
+                        </button>
+                        <button class="w-8 h-8 flex items-center justify-center text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit">
+                            <i class="fas fa-edit text-sm"></i>
+                        </button>
+                        <button class="w-8 h-8 flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Hapus">
+                            <i class="fas fa-trash text-sm"></i>
+                        </button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+    <div class="p-5 border-t border-slate-100 bg-slate-50/50 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+        <p>Menampilkan <span class="font-bold text-slate-700">3</span> dari <span class="font-bold text-slate-700">128</span> berkas desain</p>
+        <div class="flex gap-2">
+            <button class="px-3 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-orange-600 transition font-medium shadow-sm disabled:opacity-50 flex items-center gap-1" disabled>
+                <i class="fas fa-chevron-left text-[10px]"></i> Prev
+            </button>
+            <div class="flex gap-1">
+                <button class="w-8 h-8 flex items-center justify-center bg-orange-600 text-white rounded-lg font-bold shadow-md shadow-orange-500/30">1</button>
+                <button class="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg font-bold transition">2</button>
+                <button class="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg font-bold transition">3</button>
+            </div>
+            <button class="px-3 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-orange-600 transition font-medium shadow-sm flex items-center gap-1">
+                Next <i class="fas fa-chevron-right text-[10px]"></i>
+            </button>
+        </div>
+    </div>
 </div>
 {% endblock %}
