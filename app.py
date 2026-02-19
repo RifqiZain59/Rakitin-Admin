@@ -194,6 +194,10 @@ def tambah_desain():
         return redirect(url_for('login'))
     
     try:
+        # Pindahkan import ke dalam fungsi agar pasti terbaca
+        import base64 
+        import random
+        
         nama_proyek = request.form.get('nama_proyek')
         nama_klien = request.form.get('nama_klien')
         kategori = request.form.get('kategori')
@@ -216,15 +220,20 @@ def tambah_desain():
             size_mb = len(file_data) / (1024 * 1024)
             ukuran_str = f"{size_mb:.2f} MB"
             
+            # CEK UKURAN FILE LIMIT FIREBASE (Maks ~800 KB agar aman jadi Base64)
+            if len(file_data) > 800000:
+                flash("Gagal Upload: Ukuran file terlalu besar! Maksimal gambar adalah 800 KB.", "error")
+                return redirect(url_for('desain'))
+            
             # 4. Konversi ke Base64 (Data URI)
             encoded_string = base64.b64encode(file_data).decode('utf-8')
             mime_type = file_gambar.mimetype
             file_base64 = f"data:{mime_type};base64,{encoded_string}"
 
         # Format ID Berkas random
-        import random
         id_berkas = f"DES-{random.randint(1000, 9999)}-X"
 
+        # Kunci 'status' dan 'jumlah_revisi' telah dihapus dari database
         data_desain = {
             'id_berkas': id_berkas,
             'nama_proyek': nama_proyek,
@@ -233,9 +242,7 @@ def tambah_desain():
             'gaya_desain': gaya_desain,
             'format': format_file,
             'ukuran': ukuran_str,
-            'file_base64': file_base64, # Menyimpan Base64 ke Firestore
-            'status': 'Proses Drafting',
-            'jumlah_revisi': 0,
+            'file_base64': file_base64,
             'nama_arsitek': user['name'],
             'created_by_uid': user['uid'],
             'created_at': firestore.SERVER_TIMESTAMP
@@ -243,11 +250,73 @@ def tambah_desain():
 
         # Simpan ke Firestore
         db.collection('berkas_desain').add(data_desain)
+        
+        # NOTE: Baris flash() pesan sukses telah DIHAPUS dari sini
 
     except Exception as e:
-        # Peringatan: Dokumen Firestore punya limit max 1 MB per dokumen.
-        # Jika upload base64 gagal/error, kemungkinan file terlalu besar.
         print(f"Error saat menyimpan desain ke Firestore: {e}")
+        # Pesan error tetap dipertahankan agar Anda tahu jika server bermasalah
+        flash(f"Terjadi kesalahan server saat upload: {str(e)}", "error")
+        
+    return redirect(url_for('desain'))
+
+@app.route('/api/edit_desain', methods=['POST'])
+def edit_desain():
+    user = get_current_user_info()
+    if not user: 
+        return redirect(url_for('login'))
+    
+    try:
+        import base64
+        
+        # Menangkap data teks dari form Modal Edit
+        item_id = request.form.get('id')
+        nama_proyek = request.form.get('nama_proyek')
+        nama_klien = request.form.get('nama_klien')
+        kategori = request.form.get('kategori')
+        gaya_desain = request.form.get('gaya_desain')
+
+        # Data dasar yang akan di-update
+        data_update = {
+            'nama_proyek': nama_proyek,
+            'nama_klien': nama_klien,
+            'kategori': kategori,
+            'gaya_desain': gaya_desain
+        }
+        
+        # CEK APAKAH ADA FILE BARU YANG DIUPLOAD PADA SAAT EDIT
+        file_gambar = request.files.get('file_gambar')
+        if file_gambar and file_gambar.filename != '':
+            # 1. Dapatkan Ekstensi
+            filename = file_gambar.filename
+            format_file = "." + filename.rsplit('.', 1)[1].upper() if '.' in filename else '.JPG'
+            
+            # 2. Baca isi file
+            file_data = file_gambar.read()
+            size_mb = len(file_data) / (1024 * 1024)
+            ukuran_str = f"{size_mb:.2f} MB"
+            
+            # Cek batas ukuran Firebase (Maks 800 KB)
+            if len(file_data) > 800000:
+                flash("Gagal Edit: Ukuran file baru terlalu besar! Maksimal 800 KB.", "error")
+                return redirect(url_for('desain'))
+            
+            # 3. Konversi ke Base64
+            encoded_string = base64.b64encode(file_data).decode('utf-8')
+            mime_type = file_gambar.mimetype
+            file_base64 = f"data:{mime_type};base64,{encoded_string}"
+            
+            # 4. Tambahkan data file baru ini ke dictionary data_update
+            data_update['format'] = format_file
+            data_update['ukuran'] = ukuran_str
+            data_update['file_base64'] = file_base64
+
+        # Proses update dokumen di database berdasarkan item_id
+        db.collection('berkas_desain').document(item_id).update(data_update)
+
+    except Exception as e:
+        print(f"Error saat mengedit desain: {e}")
+        flash(f"Terjadi kesalahan server saat edit: {str(e)}", "error")
         
     return redirect(url_for('desain'))
 
@@ -302,22 +371,21 @@ def desain():
     
     folder = get_role_folder(user['role'])
     
-    # 1. Siapkan list kosong untuk menampung data
     daftar_desain = []
-    
-    # 2. Tarik data dari Firestore (Koleksi 'berkas_desain')
-    try:
-        # Mengambil data dan diurutkan dari yang terbaru
-        docs = db.collection('berkas_desain').order_by('created_at', direction=firestore.Query.DESCENDING).stream()
-        for doc in docs:
-            item = doc.to_dict()
-            item['id'] = doc.id # Menyimpan ID dokumen Firestore
-            daftar_desain.append(item)
-    except Exception as e:
-        print(f"Error fetching data desain: {e}")
-        
-    # 3. Kirimkan variabel 'daftar_desain' ke file desain.html
-    return render_template(f'{folder}/desain.html', user=user, daftar_desain=daftar_desain)
+    if folder == 'arsitektur':
+        try:
+            # Mengambil data dari koleksi 'berkas_desain'
+            docs = db.collection('berkas_desain').order_by('created_at', direction=firestore.Query.DESCENDING).stream()
+            for doc in docs:
+                item = doc.to_dict()
+                item['id'] = doc.id
+                daftar_desain.append(item)
+        except Exception as e:
+            print(f"Error fetching desain: {e}")
+            
+        return render_template(f'{folder}/desain.html', user=user, daftar_desain=daftar_desain)
+
+    return render_template(f'{folder}/desain.html', user=user)
 
 @app.route('/logrevisi')
 def logrevisi():
@@ -333,7 +401,65 @@ def alat():
     if not user: return redirect(url_for('login'))
     
     folder = get_role_folder(user['role'])
-    return render_template(f'{folder}/alat.html', user=user)
+    
+    # 1. Siapkan list kosong untuk menampung data
+    daftar_alat = []
+    
+    # 2. Tarik data khusus jika user adalah tukang
+    if folder == 'tukang':
+        try:
+            # Mengambil data dari koleksi 'alat_tukang' dan mengurutkan dari yang terbaru
+            docs = db.collection('alat_tukang').order_by('created_at', direction=firestore.Query.DESCENDING).stream()
+            for doc in docs:
+                item = doc.to_dict()
+                item['id'] = doc.id # Menyimpan ID dokumen Firestore
+                daftar_alat.append(item)
+        except Exception as e:
+            # Jika terjadi error (misalnya index firebase belum dibuat), data akan ditarik tanpa diurutkan
+            print(f"Peringatan: Gagal mengurutkan data (Mungkin butuh Index Firestore). Menarik data tanpa urutan... Error: {e}")
+            try:
+                docs = db.collection('alat_tukang').stream()
+                for doc in docs:
+                    item = doc.to_dict()
+                    item['id'] = doc.id
+                    daftar_alat.append(item)
+            except Exception as ex:
+                print(f"Error fatal fetching alat: {ex}")
+            
+    # 3. Kirimkan variabel 'daftar_alat' ke file alat.html
+    return render_template(f'{folder}/alat.html', user=user, daftar_alat=daftar_alat)
+
+@app.route('/api/edit_alat', methods=['POST'])
+def edit_alat():
+    user = get_current_user_info()
+    if not user: 
+        return redirect(url_for('login'))
+    
+    try:
+        # Menangkap data dari form Modal Edit
+        item_id = request.form.get('id')
+        nama_alat = request.form.get('nama_alat')
+        merk = request.form.get('merk', '-')
+        kategori = request.form.get('kategori')
+        ketersediaan = request.form.get('ketersediaan')
+        kondisi = request.form.get('kondisi')
+
+        # Data yang akan di-update ke Firestore
+        data_update = {
+            'nama_alat': nama_alat,
+            'merk': merk,
+            'kategori': kategori,
+            'ketersediaan': int(ketersediaan) if ketersediaan else 0,
+            'kondisi': kondisi
+        }
+        
+        # Proses update dokumen di database berdasarkan ID
+        db.collection('alat_tukang').document(item_id).update(data_update)
+
+    except Exception as e:
+        print(f"Error saat mengedit alat: {e}")
+        
+    return redirect(url_for('alat'))
 
 @app.route('/logpekerjaan')
 def logpekerjaan():
@@ -448,6 +574,62 @@ def internal_server_error(e):
     if user:
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
+
+@app.route('/api/update_status_desain', methods=['POST'])
+def update_status_desain():
+    if 'user' not in session:
+        return jsonify({'success': False, 'message': 'Unauthorized'}), 401
+        
+    try:
+        item_id = request.form.get('id')
+        status_baru = request.form.get('status')
+        
+        # Update status di Firestore
+        db.collection('berkas_desain').document(item_id).update({
+            'status': status_baru
+        })
+        
+        return jsonify({'success': True, 'message': 'Status berhasil diubah'})
+    except Exception as e:
+        print(f"Error update status: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+    
+@app.route('/api/tambah_alat', methods=['POST'])
+def tambah_alat():
+    user = get_current_user_info()
+    if not user: 
+        return redirect(url_for('login'))
+    
+    try:
+        nama_alat = request.form.get('nama_alat')
+        merk = request.form.get('merk', '-')
+        kategori = request.form.get('kategori')
+        ketersediaan = request.form.get('ketersediaan')
+        kondisi = request.form.get('kondisi')
+        
+        # Generate Kode Alat otomatis
+        import random
+        kode_alat = f"ALT-{random.randint(100, 999)}"
+
+        data_alat = {
+            'kode': kode_alat,
+            'nama_alat': nama_alat,
+            'merk': merk,
+            'kategori': kategori,
+            'ketersediaan': int(ketersediaan) if ketersediaan else 0,
+            'kondisi': kondisi,
+            'created_by': user['name'],
+            'created_by_uid': user['uid'],
+            'created_at': firestore.SERVER_TIMESTAMP
+        }
+
+        # Simpan ke Firestore
+        db.collection('alat_tukang').add(data_alat)
+
+    except Exception as e:
+        print(f"Error saat menyimpan alat ke Firestore: {e}")
+        
+    return redirect(url_for('alat'))
 
 if __name__ == '__main__':
     app.run(debug=True)

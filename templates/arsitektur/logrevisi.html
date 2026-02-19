@@ -32,123 +32,91 @@
                     <th class="px-6 py-4">Waktu</th>
                     <th class="px-6 py-4">ID Proyek</th>
                     <th class="px-6 py-4">Nama Proyek</th>
-                    <th class="px-6 py-4">Tahapan</th>
+                    <th class="px-6 py-4">Kategori</th>
                     <th class="px-6 py-4">Revisi</th>
-                    <th class="px-6 py-4">Catatan Klien</th>
-                    <th class="px-6 py-4 w-40">Status</th> 
+                    <th class="px-6 py-4">Gaya Desain</th>
+                    <th class="px-6 py-4 w-48">Status</th> 
                     <th class="px-6 py-4">Arsitek/Drafter</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
                 
-                <tr class="hover:bg-slate-50/80 transition-colors group">
-                    <td class="px-6 py-4 text-slate-400 text-xs font-medium">10:45</td>
-                    <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">PRJ-24A1</td>
-                    <td class="px-6 py-4 font-bold text-slate-800">Desain Ruko 3 Lantai</td>
-                    <td class="px-6 py-4">
-                        <span class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-blue-100 shadow-sm">Konsep Awal</span>
-                    </td>
-                    <td class="px-6 py-4 font-bold text-slate-500">Rev. 0</td>
-                    <td class="px-6 py-4 text-slate-500 text-xs truncate max-w-[150px]" title="Penentuan fasad depan...">Penentuan fasad depan...</td>
-                    
-                    <td class="px-6 py-4 relative">
-                        <div class="relative inline-block text-left w-full">
-                            <button onclick="toggleDropdown('dropdown-1')" id="btn-1" 
-                                class="flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border bg-amber-50 text-amber-700 border-amber-200 hover:shadow-md hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-palette"></i>
-                                    <span>Drafting</span>
-                                </div>
-                                <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
-                            </button>
+                {% if daftar_log %}
+                    {% for log in daftar_log %}
+                    <tr class="hover:bg-slate-50/80 transition-colors group">
+                        <td class="px-6 py-4 text-slate-400 text-xs font-medium">{{ log.waktu_format }}</td>
+                        <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">{{ log.id_berkas | default('PRJ-000') }}</td>
+                        <td class="px-6 py-4 font-bold text-slate-800">{{ log.nama_proyek }}</td>
+                        <td class="px-6 py-4">
+                            <span class="bg-blue-50 text-blue-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-blue-100 shadow-sm">
+                                {{ log.kategori | default('Desain') }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 font-bold text-slate-500">Rev. {{ log.jumlah_revisi | default('0') }}</td>
+                        <td class="px-6 py-4 text-slate-500 text-xs truncate max-w-[150px]">{{ log.gaya_desain | default('-') }}</td>
+                        
+                        <td class="px-6 py-4 relative">
+                            <div class="relative inline-block text-left w-full">
+                                
+                                <button onclick="toggleDropdown('dropdown-{{ loop.index }}')" id="btn-{{ loop.index }}" 
+                                    class="flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border focus:outline-none focus:ring-2
+                                    {% if log.status == 'Final / Disetujui' %} bg-emerald-50 text-emerald-700 border-emerald-200 hover:border-emerald-300 focus:ring-emerald-500/20
+                                    {% elif log.status == 'Menunggu Feedback' %} bg-amber-50 text-amber-700 border-amber-200 hover:border-amber-300 focus:ring-amber-500/20
+                                    {% elif log.status == 'Butuh Revisi' %} bg-rose-50 text-rose-700 border-rose-200 hover:border-rose-300 focus:ring-rose-500/20
+                                    {% else %} bg-slate-50 text-slate-700 border-slate-200 hover:border-slate-300 focus:ring-slate-500/20 {% endif %}">
+                                    
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas 
+                                        {% if log.status == 'Final / Disetujui' %} fa-check-double
+                                        {% elif log.status == 'Menunggu Feedback' %} fa-clock
+                                        {% elif log.status == 'Butuh Revisi' %} fa-exclamation-circle
+                                        {% else %} fa-palette {% endif %}"></i>
+                                        <span>{{ log.status | default('Proses Drafting') }}</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
+                                </button>
 
-                            <div id="dropdown-1" class="hidden absolute left-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden animation-fade-in origin-top-left transform transition-all">
-                                <div class="py-1">
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-1', 'dropdown-1', 'proses')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-amber-50 hover:text-amber-700 transition">
-                                        <i class="fas fa-palette text-amber-500 w-4"></i> Drafting
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-1', 'dropdown-1', 'selesai')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition">
-                                        <i class="fas fa-check-double text-emerald-500 w-4"></i> Disetujui
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-1', 'dropdown-1', 'batal')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700 transition">
-                                        <i class="fas fa-pause-circle text-rose-500 w-4"></i> Ditunda (Hold)
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-
-                    <td class="px-6 py-4 text-xs font-bold text-slate-600">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs shadow-sm border border-indigo-200">A</div>
-                            Andi (Lead)
-                        </div>
-                    </td>
-                </tr>
-
-                <tr class="hover:bg-slate-50/80 transition-colors group">
-                    <td class="px-6 py-4 text-slate-400 text-xs font-medium">09:12</td>
-                    <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">PRJ-24B3</td>
-                    <td class="px-6 py-4 font-bold text-slate-800">Interior Villa Bali</td>
-                    <td class="px-6 py-4">
-                        <span class="bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg text-xs font-bold border border-purple-100 shadow-sm">3D Rendering</span>
-                    </td>
-                    <td class="px-6 py-4 font-bold text-rose-500">Rev. 2</td>
-                    <td class="px-6 py-4 text-slate-500 text-xs truncate max-w-[150px]" title="Pencahayaan kurang natural">Pencahayaan kurang natural</td>
-                    
-                    <td class="px-6 py-4 relative">
-                        <div class="relative inline-block text-left w-full">
-                            <button onclick="toggleDropdown('dropdown-2')" id="btn-2" 
-                                class="flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border bg-emerald-50 text-emerald-700 border-emerald-200 hover:shadow-md hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-check-double"></i>
-                                    <span>Disetujui</span>
-                                </div>
-                                <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
-                            </button>
-
-                            <div id="dropdown-2" class="hidden absolute left-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden transform transition-all">
-                                <div class="py-1">
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-2', 'dropdown-2', 'proses')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-amber-50 hover:text-amber-700 transition">
-                                        <i class="fas fa-palette text-amber-500 w-4"></i> Drafting
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-2', 'dropdown-2', 'selesai')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition">
-                                        <i class="fas fa-check-double text-emerald-500 w-4"></i> Disetujui
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-2', 'dropdown-2', 'batal')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700 transition">
-                                        <i class="fas fa-pause-circle text-rose-500 w-4"></i> Ditunda (Hold)
-                                    </a>
+                                <div id="dropdown-{{ loop.index }}" class="hidden absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden transform transition-all">
+                                    <div class="py-1">
+                                        <a href="javascript:void(0)" onclick="saveStatusToDB('{{ log.id }}', 'btn-{{ loop.index }}', 'dropdown-{{ loop.index }}', 'Proses Drafting')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-700 transition">
+                                            <i class="fas fa-palette text-slate-500 w-4"></i> Proses Drafting
+                                        </a>
+                                        <a href="javascript:void(0)" onclick="saveStatusToDB('{{ log.id }}', 'btn-{{ loop.index }}', 'dropdown-{{ loop.index }}', 'Menunggu Feedback')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-amber-50 hover:text-amber-700 transition">
+                                            <i class="fas fa-clock text-amber-500 w-4"></i> Menunggu Feedback
+                                        </a>
+                                        <a href="javascript:void(0)" onclick="saveStatusToDB('{{ log.id }}', 'btn-{{ loop.index }}', 'dropdown-{{ loop.index }}', 'Butuh Revisi')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700 transition">
+                                            <i class="fas fa-exclamation-circle text-rose-500 w-4"></i> Butuh Revisi
+                                        </a>
+                                        <a href="javascript:void(0)" onclick="saveStatusToDB('{{ log.id }}', 'btn-{{ loop.index }}', 'dropdown-{{ loop.index }}', 'Final / Disetujui')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition">
+                                            <i class="fas fa-check-double text-emerald-500 w-4"></i> Final / Disetujui
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
+                        </td>
 
-                    <td class="px-6 py-4 text-xs font-bold text-slate-600">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-xs shadow-sm border border-teal-200">S</div>
-                            Siti (3D)
-                        </div>
-                    </td>
-                </tr>
+                        <td class="px-6 py-4 text-xs font-bold text-slate-600">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center text-xs shadow-sm border border-indigo-200">
+                                    {{ log.nama_arsitek[0] | default('A') | upper }}
+                                </div>
+                                {{ log.nama_arsitek | default('Arsitek') }}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center py-8 text-slate-400 italic">Belum ada log progres desain.</td>
+                    </tr>
+                {% endif %}
 
             </tbody>
         </table>
     </div>
     
     <div class="p-5 border-t border-slate-100 bg-white flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-        <p>Menampilkan <span class="font-bold text-slate-700">1-2</span> dari <span class="font-bold text-slate-700">24</span> progres</p>
-        <div class="flex gap-2">
-            <button class="px-3 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-orange-600 transition font-medium shadow-sm disabled:opacity-50 flex items-center gap-1">
-                <i class="fas fa-chevron-left text-[10px]"></i> Prev
-            </button>
-            <div class="flex gap-1">
-                <button class="w-8 h-8 flex items-center justify-center bg-orange-600 text-white rounded-lg font-bold shadow-md shadow-orange-500/30">1</button>
-                <button class="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg font-bold transition">2</button>
-            </div>
-            <button class="px-3 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-orange-600 transition font-medium shadow-sm flex items-center gap-1">
-                Next <i class="fas fa-chevron-right text-[10px]"></i>
-            </button>
-        </div>
+        <p>Menampilkan <span class="font-bold text-slate-700">Total {{ daftar_log|length }}</span> progres</p>
     </div>
 </div>
 
@@ -162,32 +130,51 @@
         dropdown.classList.toggle('hidden');
     }
 
-    function setStatus(btnId, dropdownId, status) {
+    // Fungsi Baru: Mengubah warna UI dan menyimpan langsung ke Database
+    function saveStatusToDB(docId, btnId, dropdownId, newStatus) {
+        // 1. Ubah tampilan tombol seketika (Optimistic UI Update)
         const btn = document.getElementById(btnId);
         const iconDiv = btn.querySelector('div i');
         const textSpan = btn.querySelector('div span');
 
-        // Reset base classes
         btn.className = "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border hover:shadow-md focus:outline-none focus:ring-2";
 
-        if (status === 'proses') {
-            btn.classList.add('bg-amber-50', 'text-amber-700', 'border-amber-200', 'hover:border-amber-300', 'focus:ring-amber-500/20');
+        if (newStatus === 'Proses Drafting') {
+            btn.classList.add('bg-slate-50', 'text-slate-700', 'border-slate-200', 'hover:border-slate-300', 'focus:ring-slate-500/20');
             iconDiv.className = "fas fa-palette";
-            textSpan.innerText = "Drafting";
-        } else if (status === 'selesai') {
+        } else if (newStatus === 'Menunggu Feedback') {
+            btn.classList.add('bg-amber-50', 'text-amber-700', 'border-amber-200', 'hover:border-amber-300', 'focus:ring-amber-500/20');
+            iconDiv.className = "fas fa-clock";
+        } else if (newStatus === 'Butuh Revisi') {
+            btn.classList.add('bg-rose-50', 'text-rose-700', 'border-rose-200', 'hover:border-rose-300', 'focus:ring-rose-500/20');
+            iconDiv.className = "fas fa-exclamation-circle";
+        } else if (newStatus === 'Final / Disetujui') {
             btn.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200', 'hover:border-emerald-300', 'focus:ring-emerald-500/20');
             iconDiv.className = "fas fa-check-double";
-            textSpan.innerText = "Disetujui";
-        } else if (status === 'batal') {
-            btn.classList.add('bg-rose-50', 'text-rose-700', 'border-rose-200', 'hover:border-rose-300', 'focus:ring-rose-500/20');
-            iconDiv.className = "fas fa-pause-circle";
-            textSpan.innerText = "Ditunda";
         }
-
+        
+        textSpan.innerText = newStatus;
         document.getElementById(dropdownId).classList.add('hidden');
+
+        // 2. Kirim data ke server (Background process)
+        let formData = new FormData();
+        formData.append('id', docId);
+        formData.append('status', newStatus);
+
+        fetch("{{ url_for('update_status_desain') }}", {
+            method: "POST",
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(!data.success) {
+                alert("Gagal menyimpan status ke database: " + data.message);
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 
-    // Close dropdown when clicking outside
+    // Menutup dropdown saat klik di luar elemen
     window.onclick = function(event) {
         if (!event.target.closest('.relative.inline-block')) {
             document.querySelectorAll('[id^="dropdown-"]').forEach(el => el.classList.add('hidden'));

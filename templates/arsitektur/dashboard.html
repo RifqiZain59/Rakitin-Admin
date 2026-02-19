@@ -15,9 +15,9 @@
                 </div>
             </div>
             <div class="relative z-10 flex items-end justify-between">
-                <p class="text-4xl font-extrabold text-slate-800">12</p>
-                <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center gap-1">
-                    <i class="fas fa-arrow-up"></i> 8%
+                <p class="text-4xl font-extrabold text-slate-800">{{ stat_total_proyek | default('0') }}</p>
+                <span class="text-xs font-bold text-blue-600 bg-blue-50 border border-blue-100 px-2 py-1 rounded-full flex items-center gap-1">
+                    Aktif & Selesai
                 </span>
             </div>
             <i class="fas fa-pencil-ruler absolute -right-6 -bottom-6 text-7xl text-blue-50 opacity-0 group-hover:opacity-50 transition-all duration-300 group-hover:rotate-12"></i>
@@ -25,15 +25,15 @@
         
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg hover:border-orange-100 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
             <div class="flex items-center justify-between mb-4 relative z-10">
-                <h3 class="text-slate-500 text-sm font-semibold uppercase tracking-wider">Revisi Menunggu</h3>
+                <h3 class="text-slate-500 text-sm font-semibold uppercase tracking-wider">Revisi / Feedback</h3>
                 <div class="w-12 h-12 flex items-center justify-center bg-orange-50 rounded-xl text-orange-600 group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300 shadow-sm">
                     <i class="fas fa-clock text-xl"></i>
                 </div>
             </div>
             <div class="relative z-10 flex items-end justify-between">
-                <p class="text-4xl font-extrabold text-slate-800">4</p>
-                <span class="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full flex items-center gap-1">
-                    <i class="fas fa-arrow-up"></i> 2
+                <p class="text-4xl font-extrabold text-slate-800">{{ stat_revisi | default('0') }}</p>
+                <span class="text-xs font-bold text-orange-600 bg-orange-50 border border-orange-100 px-2 py-1 rounded-full flex items-center gap-1">
+                    Menunggu
                 </span>
             </div>
             <i class="fas fa-tools absolute -right-6 -bottom-6 text-7xl text-orange-50 opacity-0 group-hover:opacity-50 transition-all duration-300 group-hover:-rotate-12"></i>
@@ -47,9 +47,9 @@
                 </div>
             </div>
             <div class="relative z-10 flex items-end justify-between">
-                <p class="text-4xl font-extrabold text-slate-800">28</p>
-                <span class="text-xs font-bold text-green-600 bg-green-100 px-2 py-1 rounded-full flex items-center gap-1">
-                    <i class="fas fa-arrow-up"></i> 14%
+                <p class="text-4xl font-extrabold text-slate-800">{{ stat_selesai | default('0') }}</p>
+                <span class="text-xs font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded-full flex items-center gap-1">
+                    Final Disetujui
                 </span>
             </div>
             <i class="fas fa-check-circle absolute -right-6 -bottom-6 text-7xl text-emerald-50 opacity-0 group-hover:opacity-50 transition-all duration-300 group-hover:scale-110"></i>
@@ -57,13 +57,13 @@
 
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg hover:border-purple-100 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
             <div class="flex items-center justify-between mb-4 relative z-10">
-                <h3 class="text-slate-500 text-sm font-semibold uppercase tracking-wider">Pesan Baru</h3>
+                <h3 class="text-slate-500 text-sm font-semibold uppercase tracking-wider">Pesan Klien</h3>
                 <div class="w-12 h-12 flex items-center justify-center bg-purple-50 rounded-xl text-purple-600 group-hover:bg-purple-600 group-hover:text-white transition-colors duration-300 shadow-sm">
                     <i class="fas fa-comments text-xl"></i>
                 </div>
             </div>
             <div class="relative z-10 flex items-end justify-between">
-                <p class="text-4xl font-extrabold text-slate-800">5</p>
+                <p class="text-4xl font-extrabold text-slate-800">{{ stat_pesan | default('0') }}</p>
                 <span class="text-xs font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded-full flex items-center gap-1">
                     Buka Chat
                 </span>
@@ -76,55 +76,66 @@
         <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
             <div>
                 <h3 class="text-lg font-bold text-slate-800">Progres Desain Terkini</h3>
-                <p class="text-sm text-slate-500 mt-1">Pantau status pengerjaan proyek desain yang sedang berjalan.</p>
+                <p class="text-sm text-slate-500 mt-1">Pantau status pengerjaan 5 proyek terbaru yang ada di database.</p>
             </div>
-            <button class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 hover:text-orange-600 transition-colors shadow-sm">
+            <a href="{{ url_for('logrevisi') }}" class="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 hover:text-orange-600 transition-colors shadow-sm">
                 Lihat Semua
-            </button>
+            </a>
         </div>
         
         <div class="p-0">
             <div class="divide-y divide-slate-100">
                 
-                <div class="p-6 hover:bg-slate-50 transition-colors flex flex-col md:flex-row md:items-center gap-4">
-                    <div class="w-12 h-12 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
-                        <i class="fas fa-home text-xl"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex justify-between items-start mb-1">
-                            <h4 class="font-bold text-slate-800">Desain Eksterior Villa Bali</h4>
-                            <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">Sedang Dikerjakan</span>
-                        </div>
-                        <p class="text-sm text-slate-500 mb-3">Klien: Bpk. Hendra • Tahap: Render 3D</p>
-                        
-                        <div class="flex items-center gap-3">
-                            <div class="w-full bg-slate-200 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
-                            </div>
-                            <span class="text-sm font-bold text-slate-700">75%</span>
-                        </div>
-                    </div>
-                </div>
+                {% if proyek_terkini %}
+                    {% for proyek in proyek_terkini %}
+                    
+                    {% if proyek.status == 'Final / Disetujui' %}
+                        {% set icon_bg = 'bg-emerald-100 text-emerald-600' %}
+                        {% set badge = 'bg-emerald-100 text-emerald-700' %}
+                        {% set bar = 'bg-emerald-500' %}
+                        {% set icon = 'fa-check-circle' %}
+                    {% elif proyek.status == 'Menunggu Feedback' %}
+                        {% set icon_bg = 'bg-blue-100 text-blue-600' %}
+                        {% set badge = 'bg-blue-100 text-blue-700' %}
+                        {% set bar = 'bg-blue-500' %}
+                        {% set icon = 'fa-clock' %}
+                    {% elif proyek.status == 'Butuh Revisi' %}
+                        {% set icon_bg = 'bg-orange-100 text-orange-600' %}
+                        {% set badge = 'bg-orange-100 text-orange-700' %}
+                        {% set bar = 'bg-orange-500' %}
+                        {% set icon = 'fa-exclamation-circle' %}
+                    {% else %}
+                        {% set icon_bg = 'bg-slate-100 text-slate-600' %}
+                        {% set badge = 'bg-slate-100 text-slate-700' %}
+                        {% set bar = 'bg-slate-500' %}
+                        {% set icon = 'fa-palette' %}
+                    {% endif %}
 
-                <div class="p-6 hover:bg-slate-50 transition-colors flex flex-col md:flex-row md:items-center gap-4">
-                    <div class="w-12 h-12 rounded-lg bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
-                        <i class="fas fa-layer-group text-xl"></i>
-                    </div>
-                    <div class="flex-1">
-                        <div class="flex justify-between items-start mb-1">
-                            <h4 class="font-bold text-slate-800">Revisi Denah Ruko 3 Lantai</h4>
-                            <span class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold">Menunggu Persetujuan</span>
+                    <div class="p-6 hover:bg-slate-50 transition-colors flex flex-col md:flex-row md:items-center gap-4 group">
+                        <div class="w-12 h-12 rounded-lg {{ icon_bg }} flex items-center justify-center shrink-0 border border-slate-100 shadow-sm">
+                            <i class="fas {{ icon }} text-xl"></i>
                         </div>
-                        <p class="text-sm text-slate-500 mb-3">Klien: PT. Makmur Jaya • Tahap: Draft 2D</p>
-                        
-                        <div class="flex items-center gap-3">
-                            <div class="w-full bg-slate-200 rounded-full h-2">
-                                <div class="bg-orange-500 h-2 rounded-full" style="width: 90%"></div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start mb-1">
+                                <h4 class="font-bold text-slate-800 group-hover:text-orange-600 transition-colors">{{ proyek.nama_proyek }}</h4>
+                                <span class="px-3 py-1 {{ badge }} rounded-full text-xs font-bold border border-white/20 shadow-sm">{{ proyek.status | default('Proses Drafting') }}</span>
                             </div>
-                            <span class="text-sm font-bold text-slate-700">90%</span>
+                            <p class="text-sm text-slate-500 mb-3">Klien: {{ proyek.nama_klien }} • Kategori: {{ proyek.kategori }}</p>
+                            
+                            <div class="flex items-center gap-3">
+                                <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                                    <div class="{{ bar }} h-2 rounded-full transition-all duration-1000" style="width: {{ proyek.progress }}%"></div>
+                                </div>
+                                <span class="text-sm font-bold text-slate-700 w-10 text-right">{{ proyek.progress }}%</span>
+                            </div>
                         </div>
                     </div>
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="p-8 text-center text-slate-400 italic">
+                        Belum ada proyek desain terbaru yang masuk.
+                    </div>
+                {% endif %}
 
             </div>
         </div>

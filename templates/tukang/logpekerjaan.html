@@ -1,28 +1,13 @@
 {% extends "base.html" %}
-
 {% block header_title %}Log Aktivitas Pekerjaan / Gudang{% endblock %}
 
 {% block content %}
 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col h-full min-h-[500px]">
-    
     <div class="p-6 border-b border-slate-100 flex flex-wrap gap-4 justify-between items-center bg-slate-50/30 sticky top-0 z-20">
         <div class="flex flex-wrap gap-3">
-            <button class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-orange-600 hover:border-orange-200 transition-all shadow-sm">
-                <i class="fas fa-calendar-alt text-slate-400"></i>
-                <span>Filter Tanggal</span>
-            </button>
-            
-            <button class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-orange-600 hover:border-orange-200 transition-all shadow-sm">
-                <i class="fas fa-filter text-slate-400"></i>
-                <span>Semua Tipe</span>
-                <i class="fas fa-chevron-down ml-1 text-[10px]"></i>
-            </button>
+            <button class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-orange-600 transition-all shadow-sm"><i class="fas fa-calendar-alt text-slate-400"></i><span>Filter Tanggal</span></button>
         </div>
-
-        <button class="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 shadow-sm hover:shadow-emerald-500/30 transition-all hover:-translate-y-0.5 active:translate-y-0">
-            <i class="fas fa-file-excel"></i>
-            <span>Export Excel</span>
-        </button>
+        <button class="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 shadow-sm transition-all"><i class="fas fa-file-excel"></i><span>Export Excel</span></button>
     </div>
     
     <div class="overflow-x-auto overflow-y-visible flex-1"> 
@@ -36,204 +21,83 @@
                     <th class="px-6 py-4">Jumlah</th>
                     <th class="px-6 py-4">Keterangan</th>
                     <th class="px-6 py-4 w-40">Status</th> 
-                    <th class="px-6 py-4">Admin/Tukang</th>
+                    <th class="px-6 py-4">Petugas</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
-                
-                <tr class="hover:bg-slate-50/80 transition-colors group">
-                    <td class="px-6 py-4 text-slate-400 text-xs font-medium">10:45</td>
-                    <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">TRX-001</td>
-                    <td class="px-6 py-4 font-bold text-slate-800">Semen Gresik</td>
-                    <td class="px-6 py-4">
-                        <span class="bg-rose-50 text-rose-700 border border-rose-100 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">Keluar</span>
-                    </td>
-                    <td class="px-6 py-4 font-bold text-rose-600">- 10 Sak</td>
-                    <td class="px-6 py-4 text-slate-500 text-xs">Proyek Ruko A</td>
-                    
-                    <td class="px-6 py-4 relative">
-                        <div class="relative inline-block text-left w-full">
-                            <button onclick="toggleDropdown('dropdown-1')" id="btn-1" 
-                                class="flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border bg-amber-50 text-amber-700 border-amber-200 hover:shadow-md hover:border-amber-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-clock"></i>
-                                    <span>Proses</span>
-                                </div>
-                                <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
-                            </button>
-
-                            <div id="dropdown-1" class="hidden absolute left-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden transition-all">
-                                <div class="py-1">
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-1', 'dropdown-1', 'proses')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-amber-50 hover:text-amber-700 transition">
-                                        <i class="fas fa-clock text-amber-500 w-4"></i> Sedang Proses
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-1', 'dropdown-1', 'selesai')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition">
-                                        <i class="fas fa-check-circle text-emerald-500 w-4"></i> Selesai
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-1', 'dropdown-1', 'batal')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700 transition">
-                                        <i class="fas fa-times-circle text-rose-500 w-4"></i> Dibatalkan
-                                    </a>
+                {% if daftar_log %}
+                    {% for log in daftar_log %}
+                    <tr class="hover:bg-slate-50/80 transition-colors group">
+                        <td class="px-6 py-4 text-slate-400 text-xs font-medium">{{ log.waktu | default('Baru saja') }}</td>
+                        <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">{{ log.kode_ref | default('TRX-000') }}</td>
+                        <td class="px-6 py-4 font-bold text-slate-800">{{ log.nama_barang }}</td>
+                        <td class="px-6 py-4">
+                            <span class="{% if log.jenis == 'Masuk' %}bg-emerald-50 text-emerald-700 border-emerald-100{% else %}bg-rose-50 text-rose-700 border-rose-100{% endif %} border px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">{{ log.jenis }}</span>
+                        </td>
+                        <td class="px-6 py-4 font-bold {% if log.jenis == 'Masuk' %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                            {% if log.jenis == 'Masuk' %}+{% else %}-{% endif %} {{ log.jumlah }}
+                        </td>
+                        <td class="px-6 py-4 text-slate-500 text-xs">{{ log.keterangan }}</td>
+                        
+                        <td class="px-6 py-4 relative">
+                            <div class="relative inline-block text-left w-full">
+                                <button onclick="toggleDropdown('dropdown-{{ loop.index }}')" id="btn-{{ loop.index }}" 
+                                    class="flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border focus:outline-none focus:ring-2
+                                    {% if log.status == 'Selesai' %}bg-emerald-50 text-emerald-700 border-emerald-200{% elif log.status == 'Batal' %}bg-rose-50 text-rose-700 border-rose-200{% else %}bg-amber-50 text-amber-700 border-amber-200{% endif %}">
+                                    <div class="flex items-center gap-2">
+                                        <i class="fas {% if log.status == 'Selesai' %}fa-check-circle{% elif log.status == 'Batal' %}fa-times-circle{% else %}fa-clock{% endif %}"></i>
+                                        <span>{{ log.status | default('Proses') }}</span>
+                                    </div>
+                                    <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
+                                </button>
+                                <div id="dropdown-{{ loop.index }}" class="hidden absolute left-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden transition-all">
+                                    <div class="py-1">
+                                        <a href="javascript:void(0)" onclick="setStatus('btn-{{ loop.index }}', 'dropdown-{{ loop.index }}', 'proses')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-amber-50 hover:text-amber-700"><i class="fas fa-clock text-amber-500 w-4"></i> Sedang Proses</a>
+                                        <a href="javascript:void(0)" onclick="setStatus('btn-{{ loop.index }}', 'dropdown-{{ loop.index }}', 'selesai')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700"><i class="fas fa-check-circle text-emerald-500 w-4"></i> Selesai</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-xs font-bold text-slate-600">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center text-xs shadow-sm border border-blue-200">B</div>
-                            Budi
-                        </div>
-                    </td>
-                </tr>
-
-                <tr class="hover:bg-slate-50/80 transition-colors group">
-                    <td class="px-6 py-4 text-slate-400 text-xs font-medium">09:12</td>
-                    <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">TRX-002</td>
-                    <td class="px-6 py-4 font-bold text-slate-800">Paku 7cm</td>
-                    <td class="px-6 py-4">
-                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-100 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">Masuk</span>
-                    </td>
-                    <td class="px-6 py-4 font-bold text-emerald-600">+ 5 Kg</td>
-                    <td class="px-6 py-4 text-slate-500 text-xs">Restock Supplier</td>
-                    
-                    <td class="px-6 py-4 relative">
-                        <div class="relative inline-block text-left w-full">
-                            <button onclick="toggleDropdown('dropdown-2')" id="btn-2" 
-                                class="flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border bg-emerald-50 text-emerald-700 border-emerald-200 hover:shadow-md hover:border-emerald-300 focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Selesai</span>
-                                </div>
-                                <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
-                            </button>
-
-                            <div id="dropdown-2" class="hidden absolute left-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden transition-all">
-                                <div class="py-1">
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-2', 'dropdown-2', 'proses')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-amber-50 hover:text-amber-700 transition">
-                                        <i class="fas fa-clock text-amber-500 w-4"></i> Sedang Proses
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-2', 'dropdown-2', 'selesai')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition">
-                                        <i class="fas fa-check-circle text-emerald-500 w-4"></i> Selesai
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-2', 'dropdown-2', 'batal')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700 transition">
-                                        <i class="fas fa-times-circle text-rose-500 w-4"></i> Dibatalkan
-                                    </a>
-                                </div>
+                        </td>
+                        <td class="px-6 py-4 text-xs font-bold text-slate-600">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs shadow-sm border border-slate-300">{{ log.nama_petugas[0] | upper }}</div>
+                                {{ log.nama_petugas }}
                             </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-xs font-bold text-slate-600">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs shadow-sm border border-slate-300">A</div>
-                            Admin
-                        </div>
-                    </td>
-                </tr>
-
-                <tr class="hover:bg-slate-50/80 transition-colors group">
-                    <td class="px-6 py-4 text-slate-400 text-xs font-medium">08:30</td>
-                    <td class="px-6 py-4 font-mono text-xs text-slate-400 font-medium">TRX-003</td>
-                    <td class="px-6 py-4 font-bold text-slate-800">Cat Dulux</td>
-                    <td class="px-6 py-4">
-                        <span class="bg-rose-50 text-rose-700 border border-rose-100 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm">Keluar</span>
-                    </td>
-                    <td class="px-6 py-4 font-bold text-rose-600">- 2 Pail</td>
-                    <td class="px-6 py-4 text-slate-500 text-xs">Salah Order</td>
-                    
-                    <td class="px-6 py-4 relative">
-                        <div class="relative inline-block text-left w-full">
-                            <button onclick="toggleDropdown('dropdown-3')" id="btn-3" 
-                                class="flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border bg-rose-50 text-rose-700 border-rose-200 hover:shadow-md hover:border-rose-300 focus:outline-none focus:ring-2 focus:ring-rose-500/20">
-                                <div class="flex items-center gap-2">
-                                    <i class="fas fa-times-circle"></i>
-                                    <span>Batal</span>
-                                </div>
-                                <i class="fas fa-chevron-down text-[10px] opacity-60"></i>
-                            </button>
-
-                            <div id="dropdown-3" class="hidden absolute left-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-slate-100 z-50 overflow-hidden transition-all">
-                                <div class="py-1">
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-3', 'dropdown-3', 'proses')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-amber-50 hover:text-amber-700 transition">
-                                        <i class="fas fa-clock text-amber-500 w-4"></i> Sedang Proses
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-3', 'dropdown-3', 'selesai')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition">
-                                        <i class="fas fa-check-circle text-emerald-500 w-4"></i> Selesai
-                                    </a>
-                                    <a href="javascript:void(0)" onclick="setStatus('btn-3', 'dropdown-3', 'batal')" class="flex items-center gap-3 px-4 py-2.5 text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700 transition">
-                                        <i class="fas fa-times-circle text-rose-500 w-4"></i> Dibatalkan
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 text-xs font-bold text-slate-600">
-                        <div class="flex items-center gap-2">
-                            <div class="w-7 h-7 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center text-xs shadow-sm border border-teal-200">J</div>
-                            Joko
-                        </div>
-                    </td>
-                </tr>
-
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr><td colspan="8" class="text-center py-8 text-slate-400 italic">Belum ada riwayat aktivitas gudang/alat.</td></tr>
+                {% endif %}
             </tbody>
         </table>
-    </div>
-    
-    <div class="p-5 border-t border-slate-100 bg-white flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
-        <p>Menampilkan <span class="font-bold text-slate-700">1-3</span> dari <span class="font-bold text-slate-700">50</span> data</p>
-        <div class="flex gap-2">
-            <button class="px-3 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-orange-600 transition font-medium shadow-sm disabled:opacity-50 flex items-center gap-1">
-                <i class="fas fa-chevron-left text-[10px]"></i> Prev
-            </button>
-            <div class="flex gap-1">
-                <button class="w-8 h-8 flex items-center justify-center bg-orange-600 text-white rounded-lg font-bold shadow-md shadow-orange-500/30">1</button>
-                <button class="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg font-bold transition">2</button>
-                <button class="w-8 h-8 flex items-center justify-center bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-lg font-bold transition">3</button>
-            </div>
-            <button class="px-3 py-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:text-orange-600 transition font-medium shadow-sm flex items-center gap-1">
-                Next <i class="fas fa-chevron-right text-[10px]"></i>
-            </button>
-        </div>
     </div>
 </div>
 
 <script>
     function toggleDropdown(dropdownId) {
         const allDropdowns = document.querySelectorAll('[id^="dropdown-"]');
-        allDropdowns.forEach(el => {
-            if (el.id !== dropdownId) el.classList.add('hidden');
-        });
-        const dropdown = document.getElementById(dropdownId);
-        dropdown.classList.toggle('hidden');
+        allDropdowns.forEach(el => { if (el.id !== dropdownId) el.classList.add('hidden'); });
+        document.getElementById(dropdownId).classList.toggle('hidden');
     }
 
     function setStatus(btnId, dropdownId, status) {
         const btn = document.getElementById(btnId);
         const iconDiv = btn.querySelector('div i');
         const textSpan = btn.querySelector('div span');
-
-        // Gunakan style w-full agar tombol dropdown tidak mengecil
         btn.className = "flex items-center justify-between w-full px-3 py-2 rounded-xl text-xs font-bold transition-all duration-200 border hover:shadow-md focus:outline-none focus:ring-2";
 
         if (status === 'proses') {
             btn.classList.add('bg-amber-50', 'text-amber-700', 'border-amber-200', 'hover:border-amber-300', 'focus:ring-amber-500/20');
-            iconDiv.className = "fas fa-clock";
-            textSpan.innerText = "Proses";
+            iconDiv.className = "fas fa-clock"; textSpan.innerText = "Proses";
         } else if (status === 'selesai') {
             btn.classList.add('bg-emerald-50', 'text-emerald-700', 'border-emerald-200', 'hover:border-emerald-300', 'focus:ring-emerald-500/20');
-            iconDiv.className = "fas fa-check-circle";
-            textSpan.innerText = "Selesai";
-        } else if (status === 'batal') {
-            btn.classList.add('bg-rose-50', 'text-rose-700', 'border-rose-200', 'hover:border-rose-300', 'focus:ring-rose-500/20');
-            iconDiv.className = "fas fa-times-circle";
-            textSpan.innerText = "Batal";
+            iconDiv.className = "fas fa-check-circle"; textSpan.innerText = "Selesai";
         }
-
         document.getElementById(dropdownId).classList.add('hidden');
     }
-
     window.onclick = function(event) {
-        if (!event.target.closest('.relative.inline-block')) {
-            document.querySelectorAll('[id^="dropdown-"]').forEach(el => el.classList.add('hidden'));
-        }
+        if (!event.target.closest('.relative.inline-block')) document.querySelectorAll('[id^="dropdown-"]').forEach(el => el.classList.add('hidden'));
     }
 </script>
 {% endblock %}

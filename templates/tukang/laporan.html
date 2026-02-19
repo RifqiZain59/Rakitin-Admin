@@ -1,66 +1,34 @@
 {% extends "base.html" %}
-
 {% block header_title %}Laporan & Analisa{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
 
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2">
-            <i class="fas fa-filter text-orange-500"></i> Filter Laporan
-        </h3>
-        <div class="flex flex-col md:flex-row gap-4 items-end justify-between">
-            <div class="flex gap-4 w-full md:w-auto">
-                <div class="flex-1">
-                    <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Dari Tanggal</label>
-                    <input type="date" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium text-slate-700">
-                </div>
-                <div class="flex-1">
-                    <label class="block text-xs font-bold text-slate-500 mb-2 uppercase tracking-wider">Sampai Tanggal</label>
-                    <input type="date" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all font-medium text-slate-700">
-                </div>
-            </div>
-            <div class="flex gap-3 w-full md:w-auto">
-                <button class="flex-1 md:flex-none px-6 py-2.5 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-900 transition-all duration-200 shadow-sm hover:shadow-slate-900/20 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm">
-                    <i class="fas fa-search"></i> Tampilkan
-                </button>
-                <button class="flex-1 md:flex-none px-6 py-2.5 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700 transition-all duration-200 shadow-sm hover:shadow-rose-600/30 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm">
-                    <i class="fas fa-file-pdf"></i> PDF
-                </button>
-            </div>
+        <h3 class="font-bold text-slate-800 mb-4 flex items-center gap-2"><i class="fas fa-filter text-orange-500"></i> Filter Laporan</h3>
         </div>
-    </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl shadow-sm hover:shadow-lg hover:shadow-orange-500/20 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
+        <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
             <div class="relative z-10">
-                <p class="text-orange-100 text-sm font-semibold uppercase tracking-wider mb-2">Barang Masuk (Bulan Ini)</p>
-                <h3 class="text-4xl font-extrabold text-white">1,240 <span class="text-sm font-medium opacity-80">Unit</span></h3>
-                <div class="mt-4 text-xs bg-white/20 backdrop-blur-sm inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium text-white border border-white/10">
-                    <i class="fas fa-arrow-up"></i> Naik 12% dari bulan lalu
-                </div>
+                <p class="text-orange-100 text-sm font-semibold uppercase tracking-wider mb-2">Barang Masuk</p>
+                <h3 class="text-4xl font-extrabold text-white">{{ stat_masuk | default('0') }} <span class="text-sm font-medium opacity-80">Unit</span></h3>
             </div>
             <i class="fas fa-box-open absolute -right-6 -bottom-6 text-7xl text-white opacity-10 group-hover:opacity-20 transition-all duration-300 group-hover:scale-110"></i>
         </div>
         
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg hover:border-emerald-100 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
             <div class="relative z-10">
-                <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-2">Barang Keluar (Bulan Ini)</p>
-                <h3 class="text-4xl font-extrabold text-slate-800">850 <span class="text-sm font-medium text-slate-400">Unit</span></h3>
-                <div class="mt-4 text-xs text-emerald-700 bg-emerald-50 border border-emerald-100 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-bold shadow-sm">
-                    <i class="fas fa-check"></i> Target Penggunaan Terpenuhi
-                </div>
+                <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-2">Barang Keluar</p>
+                <h3 class="text-4xl font-extrabold text-slate-800">{{ stat_keluar | default('0') }} <span class="text-sm font-medium text-slate-400">Unit</span></h3>
             </div>
             <i class="fas fa-dolly absolute -right-6 -bottom-6 text-7xl text-slate-50 opacity-0 group-hover:opacity-50 transition-all duration-300 group-hover:-translate-x-4"></i>
         </div>
         
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-lg hover:border-blue-100 transition-all duration-300 hover:-translate-y-1 relative overflow-hidden group">
             <div class="relative z-10">
-                <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-2">Total Aset Gudang</p>
-                <h3 class="text-4xl font-extrabold text-slate-800">Rp 450jt</h3>
-                <div class="mt-4 text-xs text-slate-400 font-medium inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-100">
-                    <i class="fas fa-sync-alt"></i> Update: Hari ini 08:00 WIB
-                </div>
+                <p class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-2">Total Aset Gudang/Alat</p>
+                <h3 class="text-4xl font-extrabold text-slate-800">Rp {{ estimasi_juta | default('0') }}jt</h3>
             </div>
             <i class="fas fa-warehouse absolute -right-6 -bottom-6 text-7xl text-slate-50 opacity-0 group-hover:opacity-50 transition-all duration-300 group-hover:rotate-6"></i>
         </div>
@@ -69,43 +37,24 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 hover:shadow-md transition-all duration-300">
-            <h3 class="font-bold text-slate-800 mb-6 border-b border-slate-100 pb-4 text-lg">Top 3 Barang Paling Laris</h3>
+            <h3 class="font-bold text-slate-800 mb-6 border-b border-slate-100 pb-4 text-lg">Top 3 Barang Sering Dipakai (Keluar)</h3>
             <div class="space-y-6">
-                <div class="group">
-                    <div class="flex justify-between items-end mb-2">
-                        <span class="font-bold text-slate-700 flex items-center gap-2">
-                            <i class="fas fa-cube text-orange-500"></i> Semen Gresik 40kg
-                        </span>
-                        <span class="text-slate-500 text-sm font-medium">450 Sak</span>
+                {% if top_items %}
+                    {% set max_item = top_items[0].jumlah if top_items[0].jumlah > 0 else 1 %}
+                    {% for item in top_items %}
+                    <div class="group">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="font-bold text-slate-700 flex items-center gap-2"><i class="fas fa-cube text-orange-500"></i> {{ item.nama }}</span>
+                            <span class="text-slate-500 text-sm font-medium">{{ item.jumlah }} Keluar</span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                            <div class="bg-gradient-to-r from-orange-400 to-orange-600 h-3 rounded-full group-hover:scale-y-110 transition-transform origin-left" style="width: {{ (item.jumlah / max_item * 100)|int }}%"></div>
+                        </div>
                     </div>
-                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                        <div class="bg-gradient-to-r from-orange-400 to-orange-600 h-3 rounded-full group-hover:scale-y-110 transition-transform origin-left" style="width: 85%"></div>
-                    </div>
-                </div>
-
-                <div class="group">
-                    <div class="flex justify-between items-end mb-2">
-                        <span class="font-bold text-slate-700 flex items-center gap-2">
-                            <i class="fas fa-hammer text-slate-500"></i> Paku Payung
-                        </span>
-                        <span class="text-slate-500 text-sm font-medium">320 Kg</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                        <div class="bg-slate-500 h-3 rounded-full group-hover:scale-y-110 transition-transform origin-left" style="width: 65%"></div>
-                    </div>
-                </div>
-
-                <div class="group">
-                    <div class="flex justify-between items-end mb-2">
-                        <span class="font-bold text-slate-700 flex items-center gap-2">
-                            <i class="fas fa-paint-roller text-blue-500"></i> Cat Dulux Putih
-                        </span>
-                        <span class="text-slate-500 text-sm font-medium">120 Pail</span>
-                    </div>
-                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
-                        <div class="bg-blue-500 h-3 rounded-full group-hover:scale-y-110 transition-transform origin-left" style="width: 45%"></div>
-                    </div>
-                </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-slate-400 italic text-center py-4">Belum ada data barang keluar.</p>
+                {% endif %}
             </div>
         </div>
 
@@ -120,64 +69,32 @@
                             <th class="px-6 py-4">Nama</th>
                             <th class="px-6 py-4 text-center">Input Masuk</th>
                             <th class="px-6 py-4 text-center">Input Keluar</th>
-                            <th class="px-6 py-4 text-right">Akurasi Pencatatan</th>
+                            <th class="px-6 py-4 text-right">Akurasi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
-                        <tr class="group hover:bg-slate-50/80 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs shadow-sm border border-indigo-200">B</div>
-                                    <span class="font-bold text-slate-800">Budi</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-center text-emerald-600 font-bold">45 TRX</td>
-                            <td class="px-6 py-4 text-center text-rose-600 font-bold">12 TRX</td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <div class="w-16 bg-slate-200 rounded-full h-1.5 hidden md:block">
-                                        <div class="bg-indigo-500 h-1.5 rounded-full" style="width: 98%"></div>
+                        {% if performa_tukang %}
+                            {% for tk in performa_tukang %}
+                            <tr class="group hover:bg-slate-50/80 transition-colors">
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs shadow-sm border border-indigo-200">{{ tk.nama[0] | upper }}</div>
+                                        <span class="font-bold text-slate-800">{{ tk.nama }}</span>
                                     </div>
-                                    <span class="font-bold text-slate-800">98%</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="group hover:bg-slate-50/80 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold text-xs shadow-sm border border-teal-200">S</div>
-                                    <span class="font-bold text-slate-800">Siti</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-center text-emerald-600 font-bold">20 TRX</td>
-                            <td class="px-6 py-4 text-center text-rose-600 font-bold">80 TRX</td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <div class="w-16 bg-slate-200 rounded-full h-1.5 hidden md:block">
-                                        <div class="bg-teal-500 h-1.5 rounded-full" style="width: 95%"></div>
+                                </td>
+                                <td class="px-6 py-4 text-center text-emerald-600 font-bold">{{ tk.masuk }} TRX</td>
+                                <td class="px-6 py-4 text-center text-rose-600 font-bold">{{ tk.keluar }} TRX</td>
+                                <td class="px-6 py-4 text-right">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <div class="w-16 bg-slate-200 rounded-full h-1.5 hidden md:block"><div class="bg-indigo-500 h-1.5 rounded-full" style="width: {{ tk.akurasi }}%"></div></div>
+                                        <span class="font-bold text-slate-800">{{ tk.akurasi }}%</span>
                                     </div>
-                                    <span class="font-bold text-slate-800">95%</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="group hover:bg-slate-50/80 transition-colors">
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center font-bold text-xs shadow-sm border border-amber-200">J</div>
-                                    <span class="font-bold text-slate-800">Joko</span>
-                                </div>
-                            </td>
-                            <td class="px-6 py-4 text-center text-emerald-600 font-bold">10 TRX</td>
-                            <td class="px-6 py-4 text-center text-rose-600 font-bold">55 TRX</td>
-                            <td class="px-6 py-4 text-right">
-                                <div class="flex items-center justify-end gap-2">
-                                    <div class="w-16 bg-slate-200 rounded-full h-1.5 hidden md:block">
-                                        <div class="bg-amber-500 h-1.5 rounded-full" style="width: 100%"></div>
-                                    </div>
-                                    <span class="font-bold text-slate-800">100%</span>
-                                </div>
-                            </td>
-                        </tr>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td colspan="4" class="text-center py-8 text-slate-400 italic">Belum ada riwayat input.</td></tr>
+                        {% endif %}
                     </tbody>
                 </table>
             </div>

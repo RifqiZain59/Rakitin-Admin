@@ -65,7 +65,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Upload File (Gambar/PDF, Maks 1MB)</label>
+                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Upload File (Gambar/PDF, Maks 800KB)</label>
                     <input type="file" name="file_gambar" accept="image/*,.pdf" required 
                         class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-orange-50 file:text-orange-600 hover:file:bg-orange-100 cursor-pointer">
                 </div>
@@ -85,6 +85,86 @@
     </div>
 </div>
 
+<div id="modalEdit" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onclick="closeEditModal()"></div>
+
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+        <div class="relative bg-white w-full max-w-md rounded-2xl shadow-xl border border-slate-100 overflow-hidden transform transition-all animate-fade-in-up">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center bg-blue-50/50">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-edit text-blue-500"></i> Edit Berkas Desain
+                </h3>
+                <button type="button" onclick="closeEditModal()" class="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <form action="{{ url_for('edit_desain') }}" method="POST" enctype="multipart/form-data" id="formEditDesain" class="p-6 space-y-4"
+                  onsubmit="handleFormSubmit('btnUpdate', 'Memperbarui...', 'Data desain berhasil diperbarui!')">
+                
+                <input type="hidden" name="id" id="edit_id">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Nama Proyek</label>
+                    <input type="text" name="nama_proyek" id="edit_nama_proyek" required 
+                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Nama Klien</label>
+                    <input type="text" name="nama_klien" id="edit_nama_klien" required 
+                        class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Kategori</label>
+                        <div class="relative">
+                            <select name="kategori" id="edit_kategori" class="w-full pl-4 pr-10 py-2.5 appearance-none cursor-pointer bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                                <option value="Gambar Kerja">Gambar Kerja</option>
+                                <option value="3D Render">3D Render</option>
+                                <option value="Konsep & Sketsa">Konsep & Sketsa</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Gaya Desain</label>
+                        <div class="relative">
+                            <select name="gaya_desain" id="edit_gaya_desain" class="w-full pl-4 pr-10 py-2.5 appearance-none cursor-pointer bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm">
+                                <option value="Minimalis Modern">Minimalis Modern</option>
+                                <option value="Industrial & Ekspos">Industrial</option>
+                                <option value="Klasik / Tropis">Klasik / Tropis</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                            <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1 uppercase tracking-wider">Ganti File (Opsional, Maks 800KB)</label>
+                    <input type="file" name="file_gambar" accept="image/*,.pdf" 
+                        class="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm text-slate-700 focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all shadow-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-600 hover:file:bg-blue-100 cursor-pointer">
+                    <p class="text-[10px] text-slate-400 mt-1"><i class="fas fa-info-circle"></i> Biarkan kosong jika tidak ingin mengubah file/gambar.</p>
+                </div>
+
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeEditModal()" 
+                        class="flex-1 px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 hover:text-slate-800 transition-all text-sm">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnUpdate"
+                        class="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-all shadow-md shadow-blue-200 text-sm flex justify-center items-center gap-2">
+                        <span>Perbarui Data</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
     
     <div class="p-6 border-b border-slate-100 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50/30">
@@ -99,6 +179,18 @@
         </div>
     </div>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="px-6 pt-4">
+          {% for category, message in messages %}
+            <div class="p-4 rounded-xl text-sm font-bold shadow-sm {% if category == 'success' %}bg-emerald-50 text-emerald-800 border border-emerald-200{% else %}bg-rose-50 text-rose-800 border border-rose-200{% endif %}">
+              <i class="fas {% if category == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %} mr-2"></i>{{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
     <div class="overflow-x-auto">
         <table class="w-full text-left whitespace-nowrap">
             <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-bold tracking-wider">
@@ -107,7 +199,6 @@
                     <th class="px-6 py-4 border-b border-slate-100">Informasi Proyek</th>
                     <th class="px-6 py-4 border-b border-slate-100">Kategori</th>
                     <th class="px-6 py-4 border-b border-slate-100">Format & File</th>
-                    <th class="px-6 py-4 border-b border-slate-100">Status</th>
                     <th class="px-6 py-4 border-b border-slate-100 text-center">Aksi</th>
                 </tr>
             </thead>
@@ -131,8 +222,8 @@
                             <div class="flex items-center gap-3">
                                 {% if 'PDF' in (desain.format | default('JPG') | upper) %}
                                     <i class="fas fa-file-pdf text-rose-500 text-3xl"></i>
-                                {% elif desain.file_base64 %}
-                                    <img src="{{ desain.file_base64 }}" alt="Preview" class="w-12 h-12 rounded-lg object-cover border border-slate-200 shadow-sm cursor-pointer hover:scale-110 transition-transform">
+                                {% elif 'ZIP' in (desain.format | default('JPG') | upper) %}
+                                    <i class="fas fa-file-archive text-amber-500 text-3xl"></i>
                                 {% else %}
                                     <i class="fas fa-file-image text-blue-500 text-3xl"></i>
                                 {% endif %}
@@ -144,21 +235,6 @@
                             </div>
                         </td>
 
-                        <td class="px-6 py-4">
-                            {% if desain.status == 'Final / Disetujui' %}
-                                <span class="text-emerald-600 font-bold flex items-center gap-1.5 text-xs">
-                                    <i class="fas fa-check-circle"></i> Final / Disetujui
-                                </span>
-                            {% elif desain.status == 'Menunggu Feedback' %}
-                                <span class="text-amber-600 font-bold flex items-center gap-1.5 text-xs">
-                                    <i class="fas fa-clock"></i> Menunggu Feedback
-                                </span>
-                            {% else %}
-                                <span class="text-slate-600 font-bold flex items-center gap-1.5 text-xs">
-                                    <i class="fas fa-spinner fa-spin"></i> Proses Drafting
-                                </span>
-                            {% endif %}
-                        </td>
                         <td class="px-6 py-4 flex justify-center gap-2">
                             {% if desain.file_base64 %}
                                 <a href="{{ desain.file_base64 }}" download="{{ desain.nama_proyek }}{{ desain.format }}" class="w-8 h-8 flex items-center justify-center text-emerald-600 bg-emerald-50 hover:bg-emerald-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Download">
@@ -166,7 +242,7 @@
                                 </a>
                             {% endif %}
                             
-                            <button class="w-8 h-8 flex items-center justify-center text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit">
+                            <button onclick="openEditModal('{{ desain.id }}', '{{ desain.nama_proyek }}', '{{ desain.nama_klien }}', '{{ desain.kategori }}', '{{ desain.gaya_desain }}')" class="w-8 h-8 flex items-center justify-center text-blue-600 bg-blue-50 hover:bg-blue-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Edit">
                                 <i class="fas fa-edit text-sm"></i>
                             </button>
                             <button class="w-8 h-8 flex items-center justify-center text-red-600 bg-red-50 hover:bg-red-600 hover:text-white rounded-lg transition-colors shadow-sm" title="Hapus">
@@ -177,7 +253,7 @@
                     {% endfor %}
                 {% else %}
                     <tr>
-                        <td colspan="6" class="text-center py-8 text-slate-400 italic">Belum ada berkas desain yang diunggah.</td>
+                        <td colspan="5" class="text-center py-8 text-slate-400 italic">Belum ada berkas desain yang diunggah.</td>
                     </tr>
                 {% endif %}
 
@@ -194,7 +270,10 @@
     document.addEventListener("DOMContentLoaded", function() {
         let notifMsg = sessionStorage.getItem('notif_msg');
         if (notifMsg) {
-            showToast(notifMsg);
+            const flashErrors = document.querySelectorAll('.bg-rose-50');
+            if(flashErrors.length === 0){
+                showToast(notifMsg);
+            }
             sessionStorage.removeItem('notif_msg');
         }
     });
@@ -215,10 +294,14 @@
     function handleFormSubmit(btnId, loadingText, successMsg) {
         sessionStorage.setItem('notif_msg', successMsg);
         let btn = document.getElementById(btnId);
-        btn.disabled = true;
-        btn.innerHTML = `<i class='fas fa-spinner fa-spin mr-2'></i> ${loadingText}`;
+        
+        setTimeout(() => {
+            btn.disabled = true;
+            btn.innerHTML = `<i class='fas fa-spinner fa-spin mr-2'></i> ${loadingText}`;
+        }, 10);
     }
 
+    // FUNGSI MODAL UPLOAD
     function openModalUpload() {
         document.getElementById('modalUpload').classList.remove('hidden');
         document.body.style.overflow = 'hidden';
@@ -232,6 +315,28 @@
         document.getElementById('modalUpload').classList.add('hidden');
         document.body.style.overflow = 'auto';
         document.getElementById('formUpload').reset();
+    }
+
+    // FUNGSI MODAL EDIT
+    function openEditModal(id, proyek, klien, kategori, gaya) {
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_nama_proyek').value = proyek;
+        document.getElementById('edit_nama_klien').value = klien;
+        document.getElementById('edit_kategori').value = kategori;
+        document.getElementById('edit_gaya_desain').value = gaya;
+
+        let btn = document.getElementById('btnUpdate');
+        btn.disabled = false;
+        btn.innerHTML = '<span>Perbarui Data</span>';
+
+        document.getElementById('modalEdit').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditModal() {
+        document.getElementById('modalEdit').classList.add('hidden');
+        document.body.style.overflow = 'auto';
+        document.getElementById('formEditDesain').reset();
     }
 </script>
 {% endblock %}
