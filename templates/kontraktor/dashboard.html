@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block header_title %}Dashboard Utama{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-blue-600 hover:shadow-md transition">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-slate-500 text-sm font-medium">Total Item</p>
+                <h3 class="text-3xl font-bold text-slate-800 mt-1">142 <span class="text-sm font-normal text-slate-400">SKU</span></h3>
+            </div>
+            <div class="p-3 bg-blue-100 rounded-xl text-blue-600"><i class="fas fa-layer-group"></i></div>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-red-500 hover:shadow-md transition">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-slate-500 text-sm font-medium">Stok Kritis</p>
+                <h3 class="text-3xl font-bold text-red-600 mt-1">5 <span class="text-sm font-normal text-slate-400">Item</span></h3>
+            </div>
+            <div class="p-3 bg-red-100 rounded-xl text-red-600"><i class="fas fa-exclamation-triangle"></i></div>
+        </div>
+    </div>
+
+    <div class="bg-white p-6 rounded-2xl shadow-sm border-l-4 border-orange-500 hover:shadow-md transition">
+        <div class="flex justify-between items-start">
+            <div>
+                <p class="text-slate-500 text-sm font-medium">Keluar Hari Ini</p>
+                <h3 class="text-3xl font-bold text-slate-800 mt-1">45 <span class="text-sm font-normal text-slate-400">Unit</span></h3>
+            </div>
+            <div class="p-3 bg-orange-100 rounded-xl text-orange-600"><i class="fas fa-dolly-flatbed"></i></div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 flex flex-col">
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+        <h3 class="font-bold text-lg text-slate-800">Aktivitas Terkini</h3>
+        <a href="{{ url_for('log_aktivitas') }}" class="text-sm text-orange-600 hover:underline font-medium">Lihat Semua</a>
+    </div>
+    <div class="overflow-x-auto">
+        <table class="w-full text-left">
+            <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
+                <tr>
+                    <th class="px-6 py-4">Waktu</th>
+                    <th class="px-6 py-4">Barang</th>
+                    <th class="px-6 py-4">Status</th>
+                    <th class="px-6 py-4">Jumlah</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100 text-sm text-slate-700">
+                <tr>
+                    <td class="px-6 py-4 text-slate-500">10:45</td>
+                    <td class="px-6 py-4 font-bold">Semen Gresik</td>
+                    <td class="px-6 py-4"><span class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold">Keluar</span></td>
+                    <td class="px-6 py-4">- 10 Sak</td>
+                </tr>
+                <tr>
+                    <td class="px-6 py-4 text-slate-500">09:12</td>
+                    <td class="px-6 py-4 font-bold">Paku 7cm</td>
+                    <td class="px-6 py-4"><span class="bg-green-100 text-green-600 px-2 py-1 rounded text-xs font-bold">Masuk</span></td>
+                    <td class="px-6 py-4">+ 5 Kg</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

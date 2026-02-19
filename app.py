@@ -21,6 +21,13 @@ def get_user_profile(uid):
         return doc.to_dict()
     return None
 
+def get_current_user_info():
+    """Helper untuk mengambil data user dari session"""
+    return {
+        'name': session.get('name'),
+        'email': session.get('email'),
+        'role': session.get('role') # Menambahkan Role ke info user
+    }
 
 @app.route('/')
 def index():
@@ -32,24 +39,31 @@ def index():
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
-       
+        # Password tidak perlu diambil di sini untuk verifikasi manual 
+        # karena kita menggunakan metode sederhana auth.get_user_by_email 
+        # (Catatan: Idealnya verifikasi password dilakukan via Client SDK Firebase di frontend 
+        # atau endpoint verifyPassword API, tapi untuk struktur ini kita ikuti alur yang ada).
+        
         try:
+            # Cek apakah user ada di Auth Firebase
             user = auth.get_user_by_email(email)
             
+            # Ambil data profil tambahan dari Firestore (termasuk Role)
             user_data = get_user_profile(user.uid)
             
             if user_data:
                 # Simpan sesi
                 session['user'] = user.uid
                 session['email'] = user.email
-                session['name'] = user_data.get('name', 'Admin') # Default ke Admin jika nama kosong
+                session['name'] = user_data.get('name', 'User')
+                session['role'] = user_data.get('role', 'user') # Simpan Role ke Session
                 
-                flash(f"Selamat datang kembali, {session['name']}!", "success")
+                flash(f"Selamat datang kembali, {session['name']} ({session['role']})!", "success")
                 return redirect(url_for('dashboard'))
             else:
                 flash("Data profil tidak ditemukan di database.", "error")
         except:
-            flash("Email tidak terdaftar.", "error")
+            flash("Email tidak terdaftar atau terjadi kesalahan.", "error")
             
     return render_template('login.html')
 
@@ -59,6 +73,12 @@ def register():
         email = request.form.get('email')
         password = request.form.get('password')
         name = request.form.get('name')
+        role = request.form.get('role') # Tangkap input Role dari form
+
+        # Validasi sederhana
+        if not role:
+            flash("Silakan pilih kategori profesi Anda.", "error")
+            return render_template('register.html')
 
         try:
             # 1. Buat User di Firebase Authentication
@@ -68,10 +88,11 @@ def register():
                 display_name=name
             )
             
-            # 2. Simpan Data ke Firestore
+            # 2. Simpan Data ke Firestore (Termasuk Role)
             db.collection('users').document(user.uid).set({
                 'name': name,
                 'email': email,
+                'role': role, # Simpan role yang dipilih (tukang, kontraktor, dll)
                 'created_at': firestore.SERVER_TIMESTAMP
             })
             
@@ -83,55 +104,36 @@ def register():
             
     return render_template('register.html')
 
-# --- HALAMAN UTAMA (DIPERBAIKI) ---
+# --- HALAMAN UTAMA ---
 
 @app.route('/dashboard')
 def dashboard():
-    # 1. Cek Login
     if 'user' not in session:
         return redirect(url_for('login'))
     
-    # 2. Siapkan data user untuk template
-    user_info = {
-        'name': session.get('name'),
-        'email': session.get('email')
-    }
-    
-    # 3. Render dengan variable 'user' yang sudah didefinisikan
-    return render_template('dashboard.html', user=user_info)
+    # Render dengan info user (termasuk role)
+    return render_template('dashboard.html', user=get_current_user_info())
 
 @app.route('/stok')
 def stok_barang():
     if 'user' not in session:
         return redirect(url_for('login'))
         
-    user_info = {
-        'name': session.get('name'),
-        'email': session.get('email')
-    }
-    return render_template('stok.html', user=user_info)
+    return render_template('stok.html', user=get_current_user_info())
 
 @app.route('/chat')
 def chat():
     if 'user' not in session:
         return redirect(url_for('login'))
         
-    user_info = {
-        'name': session.get('name'),
-        'email': session.get('email')
-    }
-    return render_template('chat.html', user=user_info)
+    return render_template('chat.html', user=get_current_user_info())
 
 @app.route('/logs')
 def log_aktivitas():
     if 'user' not in session:
         return redirect(url_for('login'))
         
-    user_info = {
-        'name': session.get('name'),
-        'email': session.get('email')
-    }
-    return render_template('logs.html', user=user_info)
+    return render_template('logs.html', user=get_current_user_info())
 
 @app.route('/logout')
 def logout():
@@ -143,13 +145,8 @@ def logout():
 def laporan():
     if 'user' not in session:
         return redirect(url_for('login'))
-        
-    user_info = {
-        'name': session.get('name'),
-        'email': session.get('email')
-    }
     
-    return render_template('laporan.html', user=user_info)
+    return render_template('laporan.html', user=get_current_user_info())
 
 if __name__ == '__main__':
     app.run(debug=True)

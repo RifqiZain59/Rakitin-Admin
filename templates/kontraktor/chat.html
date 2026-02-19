@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block header_title %}Internal Chat{% endblock %}
+
+{% block content %}
+<div class="flex h-[calc(100vh-160px)] bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+    
+    <div class="w-1/3 border-r border-gray-100 flex flex-col bg-slate-50/50">
+        <div class="p-6">
+            <div class="relative group">
+                <i class="fas fa-search absolute left-4 top-3.5 text-slate-400 group-focus-within:text-orange-500 transition-colors"></i>
+                <input type="text" placeholder="Cari rekan atau tim..." 
+                    class="w-full pl-11 pr-4 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:border-orange-500 focus:ring-4 focus:ring-orange-500/10 transition-all text-sm bg-white shadow-sm">
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto custom-scrollbar">
+            <div class="px-3">
+                <div class="group flex items-center gap-4 p-4 rounded-2xl bg-white shadow-sm border border-orange-100 cursor-pointer transition-all hover:scale-[1.02] active:scale-95 mb-2">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-2xl bg-orange-500 flex items-center justify-center font-bold text-white shadow-lg shadow-orange-200">B</div>
+                        <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-4 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-center mb-0.5">
+                            <h4 class="font-bold text-slate-800 text-sm truncate">Budi (Logistik)</h4>
+                            <span class="text-[10px] font-medium text-orange-600">10:32</span>
+                        </div>
+                        <p class="text-xs text-slate-500 truncate font-medium">Pak, semen yang baru datang ditaruh di...</p>
+                    </div>
+                </div>
+
+                <div class="group flex items-center gap-4 p-4 rounded-2xl hover:bg-white hover:shadow-sm border border-transparent hover:border-slate-100 cursor-pointer transition-all mb-2">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-100">S</div>
+                        <span class="absolute -bottom-1 -right-1 w-4 h-4 bg-slate-300 border-4 border-white rounded-full"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-center mb-0.5">
+                            <h4 class="font-bold text-slate-800 text-sm truncate">Siti (Keuangan)</h4>
+                            <span class="text-[10px] font-medium text-slate-400">Kemarin</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs text-slate-400 truncate">Invoice sudah dikirim ya.</p>
+                            <span class="bg-blue-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="w-2/3 flex flex-col bg-white">
+        <div class="px-8 py-4 bg-white border-b border-gray-100 flex justify-between items-center shadow-sm z-10">
+            <div class="flex items-center gap-4">
+                <div class="w-11 h-11 rounded-2xl bg-orange-500 flex items-center justify-center font-bold text-white">B</div>
+                <div>
+                    <h3 class="font-bold text-slate-800">Budi (Logistik)</h3>
+                    <div class="flex items-center gap-1.5">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <span class="text-[11px] font-medium text-green-600 uppercase tracking-wider">Online Sekarang</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all border border-slate-100"><i class="fas fa-phone"></i></button>
+                <button class="w-10 h-10 rounded-xl flex items-center justify-center text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all border border-slate-100"><i class="fas fa-ellipsis-v"></i></button>
+            </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-8 space-y-6 bg-slate-50/30 custom-scrollbar">
+            <div class="flex justify-center">
+                <span class="px-4 py-1 bg-white border border-slate-100 rounded-full text-[10px] font-bold text-slate-400 uppercase tracking-widest shadow-sm">Hari Ini</span>
+            </div>
+
+            <div class="flex justify-start items-end gap-3">
+                <div class="w-8 h-8 rounded-lg bg-slate-200 flex items-center justify-center text-[10px] font-bold text-slate-500 shrink-0">B</div>
+                <div class="relative max-w-md">
+                    <div class="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm border border-slate-100 text-sm text-slate-700 leading-relaxed">
+                        <p>Pak, semen yang baru datang ditaruh di gudang B atau C?</p>
+                    </div>
+                    <span class="text-[10px] font-medium text-slate-400 mt-2 block">10:30 AM</span>
+                </div>
+            </div>
+
+            <div class="flex justify-end items-end gap-3">
+                <div class="relative max-w-md">
+                    <div class="bg-gradient-to-br from-orange-500 to-orange-600 p-4 rounded-2xl rounded-br-none shadow-lg shadow-orange-200 text-sm text-white leading-relaxed">
+                        <p>Taruh di Gudang B saja, yang C masih penuh untuk stok besi beton.</p>
+                    </div>
+                    <div class="flex justify-end items-center gap-1.5 mt-2">
+                        <span class="text-[10px] font-medium text-slate-400">10:32 AM</span>
+                        <i class="fas fa-check-double text-[10px] text-blue-500"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-6 bg-white border-t border-gray-100">
+            <div class="flex items-center gap-4 bg-slate-50 p-2 rounded-2xl border border-slate-100 focus-within:border-orange-500 focus-within:ring-4 focus-within:ring-orange-500/10 transition-all">
+                <button class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-orange-600 transition-colors">
+                    <i class="fas fa-plus-circle text-xl"></i>
+                </button>
+                <input type="text" placeholder="Ketik pesan Anda di sini..." 
+                    class="flex-1 bg-transparent border-none focus:ring-0 text-sm text-slate-700 py-2">
+                <div class="flex items-center gap-1 pr-1">
+                    <button class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-orange-600 transition-colors">
+                        <i class="far fa-smile text-xl"></i>
+                    </button>
+                    <button class="bg-slate-800 hover:bg-orange-600 text-white w-10 h-10 rounded-xl shadow-lg shadow-slate-200 transition-all hover:scale-105 active:scale-95 flex items-center justify-center">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Custom Scrollbar CSS */
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e2e8f0;
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #cbd5e1;
+    }
+</style>
+{% endblock %}

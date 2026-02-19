@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GUDANGKU - Sistem Manajemen</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+    <div class="{{ 'flex h-screen overflow-hidden' if user else '' }}">
+        
+        {# --- SIDEBAR (Hanya Tampil Jika User Ada) --- #}
+        {% if user %}
+        <aside class="w-64 bg-slate-900 text-white hidden md:flex flex-col shadow-2xl z-20 shrink-0">
+            <div class="h-20 flex items-center justify-center border-b border-slate-800">
+                <h1 class="text-2xl font-bold tracking-wider">
+                    <i class="fas fa-warehouse text-orange-500 mr-2"></i>GUDANGKU
+                </h1>
+            </div>
+
+            <nav class="flex-1 px-4 py-6 space-y-2">
+                <a href="{{ url_for('dashboard') }}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.endpoint == 'dashboard' %} bg-orange-600 text-white shadow-lg shadow-orange-900/20 hover:scale-105 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
+                    <i class="fas fa-home w-8"></i> Home
+                </a>
+                <a href="{{ url_for('stok_barang') }}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.endpoint == 'stok_barang' %} bg-orange-600 text-white shadow-lg shadow-orange-900/20 hover:scale-105 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
+                    <i class="fas fa-boxes w-8"></i> Stok Barang
+                </a>
+                <a href="{{ url_for('chat') }}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.endpoint == 'chat' %} bg-orange-600 text-white shadow-lg shadow-orange-900/20 hover:scale-105 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
+                    <i class="fas fa-comments w-8"></i> Chat
+                </a>
+                <a href="{{ url_for('log_aktivitas') }}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.endpoint == 'log_aktivitas' %} bg-orange-600 text-white shadow-lg shadow-orange-900/20 hover:scale-105 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
+                    <i class="fas fa-history w-8"></i> Log Aktivitas
+                </a>
+                <a href="{{ url_for('laporan') }}" class="flex items-center px-4 py-3 rounded-lg transition {% if request.endpoint == 'laporan' %} bg-orange-600 text-white shadow-lg shadow-orange-900/20 hover:scale-105 {% else %} text-slate-400 hover:bg-slate-800 hover:text-white {% endif %}">
+                    <i class="fas fa-chart-line w-8"></i> Laporan
+                </a>
+            </nav>
+
+            <div class="p-4 border-t border-slate-800 bg-slate-900">
+                <a href="{{ url_for('logout') }}" class="flex items-center px-4 py-2 text-red-400 hover:text-red-300 hover:bg-slate-800 rounded-lg transition">
+                    <i class="fas fa-sign-out-alt w-8"></i> Keluar
+                </a>
+            </div>
+        </aside>
+        {% endif %}
+
+        {# --- AREA UTAMA --- #}
+        <main class="{{ 'flex-1 flex flex-col overflow-hidden relative' if user else 'w-full' }}">
+            
+            {# --- HEADER (Hanya Tampil Jika User Ada) --- #}
+            {% if user %}
+            <header class="bg-white shadow-sm h-20 flex items-center justify-between px-8 z-10 shrink-0">
+                <h2 class="text-2xl font-bold text-slate-800">
+                    {% block header_title %}Dashboard Utama{% endblock %}
+                </h2>
+                
+                <div class="flex items-center gap-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-bold text-slate-900">{{ user.name }}</p>
+                        {# --- BAGIAN INI DIPERBARUI: Menampilkan Role Dinamis --- #}
+                        <p class="text-xs text-orange-600 uppercase font-semibold tracking-wide">
+                            {{ user.role.replace('_', ' ') if user.role else 'User' }}
+                        </p>
+                    </div>
+                    <div class="h-10 w-10 rounded-full bg-orange-100 border-2 border-orange-500 flex items-center justify-center text-orange-700 font-bold">
+                        {{ user.name[0] | upper if user.name else 'A' }}
+                    </div>
+                </div>
+            </header>
+            {% endif %}
+
+            {# --- KONTEN DINAMIS --- #}
+            <div class="{{ 'flex-1 overflow-y-auto p-8 scroll-smooth bg-gray-50' if user else '' }}">
+                
+                {# Flash Message Global #}
+                {% if user %}
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                      {% if messages %}
+                        <div class="mb-6">
+                          {% for category, message in messages %}
+                            <div class="p-4 rounded-lg shadow-sm mb-2 text-sm font-bold 
+                                {% if category == 'success' %} bg-green-100 text-green-700 border border-green-200
+                                {% elif category == 'error' %} bg-red-100 text-red-700 border border-red-200
+                                {% else %} bg-blue-100 text-blue-700 border border-blue-200 {% endif %}">
+                              {{ message }}
+                            </div>
+                          {% endfor %}
+                        </div>
+                      {% endif %}
+                    {% endwith %}
+                {% endif %}
+
+                {# BLOCK CONTENT #}
+                {% block content %}{% endblock %}
+
+            </div>
+        </main>
+
+    </div>
+</body>
+</html>
